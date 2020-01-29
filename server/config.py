@@ -8,13 +8,13 @@ package_folder = os.path.join(static_folder, 'packages')
 class Config(object):
     DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    SECRET_KEY = os.urandom(128).hex()
+    SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-which-should-be-overwritten")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
-        user=os.getenv("POSTGRES_USER", 'postgres'),
-        pw=os.getenv("POSTGRES_PASSWORD", 'postgres'),
+        user=os.getenv("POSTGRES_USER", 'user'),
+        pw=os.getenv("POSTGRES_PASSWORD", 'password'),
         url=os.getenv("POSTGRES_PASSWORD", 'localhost:5432'),
-        db=os.getenv("POSTGRES_DB", 'postgres'),
+        db=os.getenv("POSTGRES_DB", 'db'),
     )
 
     TIMEZONE = 'Asia/Singapore'
