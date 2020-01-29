@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<head lang="en">
+    <title>Simple PyPI Repository</title>
+</head>
+<body>
+{% for p in packages %}
+    <a href="{{ p.link }}">{{ p.title }}</a>
+{% endfor %}
+</body>
