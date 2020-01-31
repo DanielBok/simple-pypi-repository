@@ -7,6 +7,7 @@ from sqlalchemy import func
 
 from application.extensions import db
 from ._mixins import ResourceMixin
+from .package import Package
 
 secret_key = os.getenv("SECRET_KEY", "default-secret-key-which").encode()
 
@@ -15,13 +16,13 @@ class Account(ResourceMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False, index=True, unique=True)
     password = db.Column(db.String(100))
-    allow_overrides = db.Column(db.Boolean, default=False)
     email = db.Column(db.String(512), nullable=False, index=True, unique=True)
 
-    def __init__(self, username: str, password: str, allow_overrides: bool, email: str):
+    packages = db.relationship('Package', backref='account', lazy='select', cascade="all,delete,delete-orphan")
+
+    def __init__(self, username: str, password: str, email: str):
         self.username = username
         self.password = password
-        self.allow_overrides = allow_overrides
         self.email = email
 
         self.validate()
@@ -41,10 +42,15 @@ class Account(ResourceMixin, db.Model):
         if account is None or password is None:
             return account
 
-        if not account.validate_password(password):
+        if not account.is_valid_password(password):
             return None
 
         return account
+
+    def find_package(self, name: str) -> Optional[Package]:
+        for p in self.packages:  # type: Package
+            if p.name == name.lower():
+                return p
 
     def validate(self):
         self.username = self.username.strip()
@@ -61,22 +67,25 @@ class Account(ResourceMixin, db.Model):
         if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", self.email) is None:
             raise ValueError(f"email address '{self.email}' is not valid")
 
-    def validate_password(self, password: str):
+    def is_valid_password(self, password: str):
         return self.password == self.encrypt(password)
 
-    def update(self, username: str, password: str, allow_overrides: bool, email: str):
+    def update(self, username: str, password: str, email: str):
         self.username = username
         self.password = password
-        self.allow_overrides = allow_overrides
         self.email = email
 
         self.validate()
         self.save()
         return self
 
-    def to_dict(self):
-        return {
+    def to_dict(self, list_packages=False):
+        out = {
             "username": self.username,
-            "allow_overrides": self.allow_overrides,
             "email": self.email,
         }
+
+        if list_packages:
+            out['packages'] = [p.to_dict() for p in self.packages]
+
+        return out
