@@ -16,7 +16,7 @@ class Package(ResourceMixin, db.Model):
     private = db.Column(db.Boolean, nullable=False)
 
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
-    locks = db.relationship('PackageLock', backref='package', lazy='select', cascade='all,delete,delete-orphan')
+    locks = db.relationship('PackageLock', backref='package', lazy='joined', cascade='all,delete,delete-orphan')
 
     def __init__(self, name: str, allow_override: bool, private: bool):
         self.name = name.lower()
@@ -27,10 +27,13 @@ class Package(ResourceMixin, db.Model):
     def find_by_name(cls, name: str) -> "Package":
         return cls.query.filter_by(name=name.lower()).one_or_none()
 
-    def add_package_lock(self):
-        lock = PackageLock.new()
+    def add_package_lock(self, description: str):
+        token = sha256(random().hex().encode()).hexdigest()[:40]
+        lock = PackageLock(token, description)
         self.locks.append(lock)
         self.save()
+
+        return lock
 
     def update(self, allow_override: bool, private: bool):
         self.allow_override = allow_override
@@ -38,7 +41,7 @@ class Package(ResourceMixin, db.Model):
         self.save()
         return self
 
-    def to_dict(self, show_tokens):
+    def to_dict(self, show_tokens: bool = False):
         out = {
             "name": self.name,
             "allow_override": self.allow_override,
@@ -46,7 +49,7 @@ class Package(ResourceMixin, db.Model):
         }
 
         if self.private and show_tokens:
-            out['tokens'] = [self.locks]
+            out['locks'] = [l.to_dict() for l in self.locks]
 
         return out
 
@@ -57,15 +60,18 @@ class PackageLock(ResourceMixin, db.Model):
     description = db.Column(db.String(255))
     package_id = db.Column(db.Integer, db.ForeignKey('package.id'))
 
-    def __init__(self, token: str, description=""):
+    def __init__(self, token: str, description: str):
         self.token = token
         self.description = description.strip()
 
     @classmethod
-    def new(cls, description=""):
-        token = sha256(random().hex().encode()).hexdigest()[:40]
-        return cls(token, description)
-
-    @classmethod
     def find_by_id(cls, id: int) -> Optional["PackageLock"]:
         return cls.query.filter_by(id=id).one_or_none()
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "token": self.token,
+            "description": self.description,
+            "package_id": self.package_id
+        }
