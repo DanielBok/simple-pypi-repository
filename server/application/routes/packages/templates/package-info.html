@@ -6,26 +6,51 @@
 </head>
 <body>
 <h1>Links for {{ name }}</h1>
-{% for p in packages %}
-    {% if private %}
-        <a href="#" onclick="promptToken()">{{ p.title }}</a><br/>
-        <script type="text/javascript">
-            {# TODO: Add function to send token with download #}
 
-            function promptToken() {
-                const token = window.prompt("Enter the token to download the package");
-                fetch("{{ p.link }}", {
-                    method: 'GET',
-                    redirect: 'follow',
-                    Authorization: `Basic Base64(${token})`
+{% if use_prompt %}
+    {# This section is for private package direct downloads #}
+    {% for p in packages %}
+        <a href="javascript:void(0);" onclick="promptToken('{{ p.link }}', '{{ p.title }}')">{{ p.title }}</a><br/>
+    {% endfor %}
+
+    <script type="text/javascript">
+        function promptToken(link, filename) {
+            const token = window.prompt("Enter the token to download the package");
+            if (token === null) return;
+
+            const headers = new Headers();
+            headers.append("Authorization", `Basic ${btoa(token)}`);
+
+
+            fetch(link, {method: 'GET', redirect: 'follow', headers})
+                .then(resp => {
+                    if (resp.status === 403) throw new Error("Could not download file as credentials supplied is invalid");
+                    return resp.blob()
                 })
-                    .then(resp => console.log(resp))
-                    .catch(err => console.error(err));
-            }
-        </script>
-    {% else %}
-        <a href="{{ p.link }}">{{ p.title }}</a><br/>
-    {% endif %}
-{% endfor %}
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                })
+                .catch(err => {
+                    alert(err);
+                });
+        }
+    </script>
+
+{% else %}
+    {# This section is for pip to get package listings and for non-private package direct downloads #}
+    {% for p in packages %}
+        <a href="{{ p.link }}"
+                {% if p.requires_python is not none %}
+           data-requires-python="{{ p.requires_python }}"
+                {% endif %}
+        >{{ p.title }}</a><br/>
+    {% endfor %}
+{% endif %}
 </body>
 </html>

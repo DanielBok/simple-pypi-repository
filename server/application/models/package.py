@@ -27,7 +27,7 @@ class Package(ResourceMixin, db.Model):
     def find_by_name(cls, name: str) -> "Package":
         return cls.query.filter_by(name=name.lower()).one_or_none()
 
-    def has_token(self, token: str):
+    def is_valid_token(self, token: str):
         for lock in self.locks:  # type: PackageLock
             if lock.token == token:
                 return True

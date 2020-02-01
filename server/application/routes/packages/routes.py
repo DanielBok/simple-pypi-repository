@@ -3,7 +3,6 @@ import re
 from flask import Blueprint, abort, current_app, request
 
 from application.models import Package
-from .meta import UserAgent
 from .operations import GetHandler, PostHandler, get_account
 
 bp = Blueprint("packages", __name__, template_folder="templates")
@@ -19,9 +18,6 @@ def index(path: str):
 
     components = path.split('/')
     if len(components) == 1:
-        user_agent = UserAgent()
-        if user_agent.is_pip:
-            return handler.send_pip_package(user_agent, path)
         return handler.render_package_information(path)
 
     elif len(components) == 2:
