@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Links for {{ name }}</title>
+</head>
+<body>
+<h1>Links for {{ name }}</h1>
+{% for p in packages %}
+    {% if private %}
+        <a href="#" onclick="promptToken()">{{ p.title }}</a><br/>
+        <script type="text/javascript">
+            {# TODO: Add function to send token with download #}
+
+            function promptToken() {
+                const token = window.prompt("Enter the token to download the package");
+                fetch("{{ p.link }}", {
+                    method: 'GET',
+                    redirect: 'follow',
+                    Authorization: `Basic Base64(${token})`
+                })
+                    .then(resp => console.log(resp))
+                    .catch(err => console.error(err));
+            }
+        </script>
+    {% else %}
+        <a href="{{ p.link }}">{{ p.title }}</a><br/>
+    {% endif %}
+{% endfor %}
+</body>
+</html>

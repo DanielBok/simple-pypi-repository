@@ -1,10 +1,13 @@
 import os
 from pathlib import Path
+from typing import Optional
 
-from flask import abort, render_template, request
+from flask import abort, render_template, request, send_file
 from werkzeug.datastructures import FileStorage
 
-from application.models import Account
+from application.models import Account, Package
+from .file import PackageFilesHandler
+from .meta import UserAgent
 
 
 def get_account():
@@ -34,11 +37,54 @@ class GetHandler:
             self.package_folder.mkdir(600, True, True)
 
     def render_index(self):
-        packages = [
-            {"link": "/simple/packageName/", "title": "title"}
-        ]
+        packages = []
+        for path in self.package_folder.iterdir():
+            if path.is_dir():
+                packages.append({"link": f"/simple/{path.name}", "title": path.name})
 
         return render_template("index.html", packages=packages)
+
+    def render_package_information(self, package_name: str):
+        package = Package.find_by_name(package_name)
+        folder = self.package_folder.joinpath(package_name)
+
+        packages = []
+        for path in folder.iterdir():
+            if path.is_file() and (path.name.endswith('.whl') or path.name.endswith('.tar.gz')):
+                packages.append({"link": f"/simple/{package_name}/{path.name}", "title": path.name})
+
+        return render_template('package-info.html', name=package_name, packages=packages, private=package.private)
+
+    def send_pip_package(self, user_agent: UserAgent, package_name: str):
+        # TODO check pip install implementation
+        package = Package.find_by_name(package_name)
+        if package.private:
+            token = self._get_token()
+            if token is None or not package.has_token(token):
+                abort(403, "Not allowed to download private package without valid credentials")
+        handler = PackageFilesHandler(self.package_folder.joinpath(package_name), user_agent)
+
+        if handler.latest is None:
+            abort(404, "Package not found")
+
+        # TODO add version checker when pip is used like "pip install perfana>=0.0.8"
+        return send_file(handler.latest.path)
+
+    def send_package(self, package_name: str, filename: str):
+        package = Package.find_by_name(package_name)
+        if package.private:
+            token = self._get_token()
+            if token is None or not package.has_token(token):
+                abort(403, "Not allowed to download private package without valid credentials")
+
+        return send_file(self.package_folder.joinpath(package_name, filename).as_posix(),
+                         attachment_filename=filename)
+
+    @staticmethod
+    def _get_token() -> Optional[str]:
+        if request.authorization is None:
+            return None
+        return request.authorization['username']
 
 
 class PostHandler:

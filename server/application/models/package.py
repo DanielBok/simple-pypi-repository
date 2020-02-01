@@ -27,6 +27,12 @@ class Package(ResourceMixin, db.Model):
     def find_by_name(cls, name: str) -> "Package":
         return cls.query.filter_by(name=name.lower()).one_or_none()
 
+    def has_token(self, token: str):
+        for lock in self.locks:  # type: PackageLock
+            if lock.token == token:
+                return True
+        return False
+
     def add_package_lock(self, description: str):
         token = sha256(random().hex().encode()).hexdigest()[:40]
         lock = PackageLock(token, description)
@@ -52,6 +58,9 @@ class Package(ResourceMixin, db.Model):
             out['locks'] = [l.to_dict() for l in self.locks]
 
         return out
+
+    def __repr__(self):
+        return f"<Package name='{self.name}' allow_override={self.allow_override} private={self.private}"
 
 
 class PackageLock(ResourceMixin, db.Model):
