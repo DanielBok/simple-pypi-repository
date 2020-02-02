@@ -1,3 +1,6 @@
+from shutil import rmtree
+from pathlib import Path
+
 from flask import Blueprint, abort, current_app, request
 
 from application.models import Account
@@ -40,6 +43,12 @@ def delete_account():
     account = Account.find_account(data['username'], data['password'])
     if account is None:
         abort(401, "invalid account credentials")
+
+    folder = Path(current_app.config['PACKAGE_FOLDER'])
+    for p in account.packages:
+        pkg_folder = folder.joinpath(p.name)
+        if pkg_folder.exists():
+            rmtree(pkg_folder, True)
 
     account.delete()
     return "", 200

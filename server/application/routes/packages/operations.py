@@ -11,6 +11,7 @@ from application.models import Account, Package
 
 
 def get_account():
+    """Gets credentials from the header's 'Authorization' key"""
     if request.authorization is None:
         abort(403, "No credentials provided")
 
@@ -21,7 +22,7 @@ def get_account():
 
     account = Account.find_account(username, password)
     if account is None:
-        abort(403, "Invalid account credentials.Please ensure you have a valid registered account")
+        abort(403, "Invalid account credentials. Please ensure you have a valid registered account")
 
     return account
 

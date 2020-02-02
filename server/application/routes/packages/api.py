@@ -1,4 +1,7 @@
-from flask import Blueprint, abort, request
+from pathlib import Path
+from shutil import rmtree
+
+from flask import Blueprint, abort, current_app, request
 
 from application.models import PackageLock
 from .operations import get_account
@@ -13,6 +16,19 @@ def update_package_settings():
 
     package.update(data['allow_override'], data['private'])
     return package.to_dict()
+
+
+@bp.route("/", methods=["DELETE"])
+def delete_package():
+    data = request.get_json()
+    pkg = _fetch_validated_package(data['package'])
+
+    pkg_folder = Path(current_app.config['PACKAGE_FOLDER']).joinpath(pkg.name)
+    if pkg_folder.exists():
+        rmtree(pkg_folder, True)
+
+    pkg.delete()
+    return "", 200
 
 
 @bp.route('/<package_name>', methods=['GET'])
