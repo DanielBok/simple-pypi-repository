@@ -41,7 +41,7 @@ def get_package_details(package_name: str):
 def create_lock(package_name: str):
     data = request.get_json()
     package = _fetch_validated_package(package_name)
-    return package.add_package_lock(data.get('description', '')).to_dict()
+    return package.add_package_lock(data['description'], data.get('token', '')).to_dict()
 
 
 @bp.route("/<package_name>/lock/<int:lock_id>", methods=['DELETE'])

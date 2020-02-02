@@ -33,8 +33,9 @@ class Package(ResourceMixin, db.Model):
                 return True
         return False
 
-    def add_package_lock(self, description: str):
-        token = sha256(random().hex().encode()).hexdigest()[:40]
+    def add_package_lock(self, description: str, token=""):
+        if token == "":
+            token = sha256(random().hex().encode()).hexdigest()[:40]
         lock = PackageLock(token, description)
         self.locks.append(lock)
         self.save()
@@ -54,7 +55,7 @@ class Package(ResourceMixin, db.Model):
             "private": self.private,
         }
 
-        if self.private and show_tokens:
+        if show_tokens:
             out['locks'] = [l.to_dict() for l in self.locks]
 
         return out
@@ -70,7 +71,7 @@ class PackageLock(ResourceMixin, db.Model):
     package_id = db.Column(db.Integer, db.ForeignKey('package.id'))
 
     def __init__(self, token: str, description: str):
-        self.token = token
+        self.token = token[:40]
         self.description = description.strip()
 
     @classmethod
