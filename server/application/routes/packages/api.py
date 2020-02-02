@@ -3,7 +3,7 @@ from shutil import rmtree
 
 from flask import Blueprint, abort, current_app, request
 
-from application.models import PackageLock
+from application.models import Package, PackageLock
 from .operations import get_account
 
 bp = Blueprint("package_api", __name__)
@@ -58,7 +58,7 @@ def remove_lock(package_name: str, lock_id: int):
         return "Okay", 200
 
 
-def _fetch_validated_package(package_name: str):
+def _fetch_validated_package(package_name: str) -> Package:
     account = get_account()
     package = account.find_package(package_name)  # checks if package exists within the account's package list
     if package is None:
