@@ -41,4 +41,6 @@ def db_session(app):
     """
     with app.app_context() as ctx:
         ctx.push()
-        return db.init_app(app)
+        db.init_app(app)
+        yield db.session
+        db.session.close()
