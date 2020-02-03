@@ -1,0 +1,26 @@
+@import (reference) "../styles";
+
+.header {
+  height: @header-height !important;
+  background-color: @primary-color !important;
+  box-shadow: 0 5px 5px #cecece;
+  margin-bottom: @header-margin;
+
+  .container {
+    .container();
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+
+    .title {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      .logo {
+        width: 65px;
+      }
+    }
+  }
+}
