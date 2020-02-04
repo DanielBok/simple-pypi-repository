@@ -8,7 +8,7 @@ import styles from "./styles.less";
 const { Content } = Layout;
 
 const AppLayout: FC = ({ children }) => (
-  <Layout>
+  <Layout className={styles.background}>
     <Header />
     <Content className={styles.content}>
       <main className={styles.body}>{children}</main>
