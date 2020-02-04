@@ -1,5 +1,6 @@
 import accountRoutes from "@/modules/Account";
 import homeRoutes from "@/modules/Home";
+import projectsRoutes from "@/modules/Projects";
 
 const routeMap: Record<string, ModuleRoutes> = {
   "/": {
@@ -9,6 +10,10 @@ const routeMap: Record<string, ModuleRoutes> = {
   "/account": {
     clusterName: "Account",
     routes: accountRoutes
+  },
+  "/projects": {
+    clusterName: "Projects",
+    routes: projectsRoutes
   }
 };
 
