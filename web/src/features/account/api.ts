@@ -1,79 +1,132 @@
 import api, { ThunkFunction, ThunkFunctionAsync } from "@/infrastructure/api";
 import { notification } from "antd";
-import * as UserAction from "./actions";
+import * as AccountAction from "./actions";
 
-import { UserStorage } from "./localstorage";
-import * as UserType from "./types";
+import { AccountStorage } from "./localstorage";
+import * as AccountType from "./types";
 
 /**
  * Creates account in the backend server
  */
-export const createUser = (
-  username: string,
-  password: string,
-  email: string
-): ThunkFunctionAsync => async (dispatch, getState) => {
-  if (getState().user.loading === "REQUEST") return;
+export const createAccount = (payload: AccountType.AccountInfo): ThunkFunctionAsync => async (dispatch, getState) => {
+  if (getState().account.loading === "REQUEST") return;
 
-  const payload: UserType.UserInfo = {
-    channel: username,
-    password
-  };
+  const { status } = await api.Post("/account", payload, {
+    beforeRequest: () => dispatch(AccountAction.createUpdateAccountAsync.request())
+  });
 
-  const { status } = await api.Post(
+  if (status === 200) {
+    dispatch(AccountAction.createUpdateAccountAsync.success(payload));
+    AccountStorage.save(payload);
+    notification.success({ message: `Account: ${payload.username} created. Looking forward to your contributions!` });
+  } else {
+    dispatch(AccountAction.createUpdateAccountAsync.failure());
+    notification.error({ message: `Failed to create account` });
+    AccountStorage.clear();
+  }
+};
+
+/**
+ * Updates the account details
+ */
+export const updateAccount = (newDetails: AccountType.AccountInfo): ThunkFunctionAsync => async (
+  dispatch,
+  getState
+) => {
+  const { validated, loading } = getState().account;
+  if (loading === "REQUEST" || !validated) return;
+
+  const account = AccountStorage.load();
+  if (account === null) {
+    notification.error({ message: "Could not fetch user credentials. Please enable local storage for your browser" });
+    return;
+  }
+  const { username, password } = account;
+  const { data, status } = await api.Put<AccountType.AccountInfo>(
     "/account",
-    { ...payload, email },
     {
-      beforeRequest: () => dispatch(UserAction.createUserAsync.request())
+      username,
+      password,
+      newDetails
+    },
+    {
+      beforeRequest: () => dispatch(AccountAction.createUpdateAccountAsync.request())
     }
   );
 
   if (status === 200) {
-    dispatch(UserAction.createUserAsync.success(payload));
-    UserStorage.save(payload);
-    notification.success({
-      message: `User: ${payload.channel} created. Looking forward to your contributions!`
-    });
+    AccountStorage.save(newDetails);
+    dispatch(AccountAction.createUpdateAccountAsync.success(data));
+    notification.success({ message: `Account updated successfully` });
   } else {
-    dispatch(UserAction.createUserAsync.failure());
-    UserStorage.clear();
+    dispatch(AccountAction.createUpdateAccountAsync.failure());
+    notification.error({ message: `Failed to update account` });
+  }
+};
+
+/**
+ * Removes the account and logs out of it
+ */
+export const deleteAccount = (): ThunkFunctionAsync => async (dispatch, getState) => {
+  const { validated, loading } = getState().account;
+  if (loading === "REQUEST" || !validated) return;
+
+  const account = AccountStorage.load();
+  if (account === null) {
+    notification.error({ message: "Could not fetch user credentials. Please enable local storage for your browser" });
+    return;
+  }
+  const { username, password } = account;
+
+  const { status } = await api.Delete(
+    "/account",
+    { username, password },
+    {
+      beforeRequest: () => dispatch(AccountAction.createUpdateAccountAsync.request())
+    }
+  );
+
+  if (status === 200) {
+    notification.success({ message: "Account deleted" });
+    dispatch(logout());
+  } else {
   }
 };
 
 /**
  * Loads account details from local storage
  */
-export const loadUser = (): ThunkFunctionAsync => async dispatch => {
-  const user = UserStorage.load();
-  if (user) {
-    await dispatch(validateUser(user.channel, user.password));
-  }
+export const loadAccount = (): ThunkFunctionAsync => async dispatch => {
+  const account = AccountStorage.load();
+  if (account) await dispatch(validateAccount(account));
 };
 
 /**
  * Checks if the account is valid. Used for logging in
  */
-export const validateUser = (
-  username: string,
-  password: string
-): ThunkFunctionAsync<boolean> => async (dispatch, getState) => {
-  if (getState().user.loading === "REQUEST") return false;
-  const payload: UserType.UserInfo = {
-    channel: username,
-    password
-  };
-
-  const { status } = await api.Post("/account/check", payload, {
-    beforeRequest: () =>
-      dispatch(UserAction.fetchUserCredentialsAsync.request())
-  });
+export const validateAccount = (payload: AccountType.AccountInfo): ThunkFunctionAsync<boolean> => async (
+  dispatch,
+  getState
+) => {
+  if (getState().account.loading === "REQUEST") return false;
+  const { data, status } = await api.Post<AccountType.AccountInfoRedacted>(
+    "/account/validate",
+    {
+      username: payload.username,
+      password: payload.password
+    },
+    {
+      beforeRequest: () => dispatch(AccountAction.fetchAccountCredentialsAsync.request())
+    }
+  );
 
   if (status === 200) {
-    dispatch(UserAction.fetchUserCredentialsAsync.success(payload));
-    UserStorage.save(payload);
+    const result = { ...payload, ...data };
+    dispatch(AccountAction.fetchAccountCredentialsAsync.success(result));
+    AccountStorage.save(result);
     return true;
   } else {
-    dispatch(UserAction.fetchUserCredentialsAsync.failure());
+    dispatch(AccountAction.fetchAccountCredentialsAsync.failure());
     return false;
   }
 };
@@ -82,19 +135,16 @@ export const validateUser = (
  * Logs the account out
  */
 export const logout = (): ThunkFunction => dispatch => {
-  UserStorage.clear();
-  dispatch(UserAction.logoutUser());
+  AccountStorage.clear();
+  dispatch(AccountAction.logoutAccount());
 };
 
 /**
- * Checks if username is available from the backend
- * @param username name to check
+ * Checks if username or email is available from the backend
+ * @param value username or email value to check
  */
-export const isUsernameAvailable = async (username: string) => {
-  const { status, data } = await api.Post<string>("/account/check", {
-    channel: username,
-    password: ""
-  });
+export const checkValueExists = async (value: string) => {
+  const { status } = await api.Get<string>(`/account/check-exists/${value}`);
 
-  return status === 400 && data.trim() === "record not found";
+  return status === 200;
 };

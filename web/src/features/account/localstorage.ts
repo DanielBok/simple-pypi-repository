@@ -1,17 +1,17 @@
-import * as UserType from "./types";
+import * as AccountType from "./types";
 
-class UserLocalStorage {
-  private itemKey = "PCR_USER_INFO";
+class AccountLocalStorage {
+  private itemKey = "PyPI_ACCOUNT_INFO";
 
   public load() {
     const item = localStorage.getItem(this.itemKey);
     if (item !== null) {
-      return JSON.parse(item) as UserType.UserInfo;
+      return JSON.parse(item) as AccountType.AccountInfo;
     }
     return null;
   }
 
-  public save(user: UserType.UserInfo) {
+  public save(user: AccountType.AccountInfo) {
     localStorage.setItem(this.itemKey, JSON.stringify(user));
   }
 
@@ -20,4 +20,4 @@ class UserLocalStorage {
   }
 }
 
-export const UserStorage = new UserLocalStorage();
+export const AccountStorage = new AccountLocalStorage();

@@ -1,12 +1,15 @@
 export type Store = {
   username: string;
-  password: string;
+  email: string;
 
   validated: boolean;
   loading: LoadingState;
 };
 
-export type UserInfo = {
-  channel: string;
+export type AccountInfo = {
+  username: string;
   password: string;
+  email: string;
 };
+
+export type AccountInfoRedacted = Omit<AccountInfo, "password">;

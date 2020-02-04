@@ -1,10 +1,5 @@
 import { RootState } from "@/infrastructure/rootState";
-import axios, {
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  AxiosTransformer
-} from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosTransformer } from "axios";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import * as ApiTypes from "./types";
@@ -12,7 +7,7 @@ import * as T from "./transformers";
 
 const apiUrl = !!process.env.REACT_APP_API_URL
   ? process.env.REACT_APP_API_URL
-  : `${window.location.protocol}//${window.location.hostname}:5060`;
+  : `${window.location.protocol}//${window.location.hostname}:9090/api`;
 
 export class API {
   private client: AxiosInstance;
@@ -20,14 +15,8 @@ export class API {
   constructor(config?: AxiosRequestConfig) {
     const {
       baseURL = apiUrl,
-      transformRequest = [
-        T.SnakeCaseKeysTransformer,
-        ...(axios.defaults.transformRequest as AxiosTransformer[])
-      ],
-      transformResponse = [
-        ...(axios.defaults.transformResponse as AxiosTransformer[]),
-        T.CamelCaseKeysTransformer
-      ],
+      transformRequest = [T.SnakeCaseKeysTransformer, ...(axios.defaults.transformRequest as AxiosTransformer[])],
+      transformResponse = [...(axios.defaults.transformResponse as AxiosTransformer[]), T.CamelCaseKeysTransformer],
       ...rest
     } = config || {};
 
@@ -43,27 +32,15 @@ export class API {
     return await this.execute<R>("GET", endpoint, undefined, config);
   }
 
-  async Post<R>(
-    endpoint: string,
-    payload: any,
-    config?: ApiTypes.RequestConfig<R>
-  ) {
+  async Post<R>(endpoint: string, payload: any, config?: ApiTypes.RequestConfig<R>) {
     return await this.execute<R>("POST", endpoint, payload, config);
   }
 
-  async Put<R>(
-    endpoint: string,
-    payload: any,
-    config?: ApiTypes.RequestConfig<R>
-  ) {
+  async Put<R>(endpoint: string, payload: any, config?: ApiTypes.RequestConfig<R>) {
     return await this.execute<R>("PUT", endpoint, payload, config);
   }
 
-  async Delete<R>(
-    endpoint: string,
-    payload?: any,
-    config?: ApiTypes.RequestConfig<R>
-  ) {
+  async Delete<R>(endpoint: string, payload?: any, config?: ApiTypes.RequestConfig<R>) {
     return await this.execute<R>("DELETE", endpoint, payload, config);
   }
 
@@ -73,14 +50,8 @@ export class API {
     payload?: any,
     config?: ApiTypes.RequestConfig<R>
   ): Promise<AxiosResponse<R>> {
-    const {
-      onError = [],
-      onSuccess = [],
-      beforeRequest = [],
-      afterResponse = [],
-      returnErrorResponse = true,
-      ...req
-    } = config || {};
+    const { onError = [], onSuccess = [], beforeRequest = [], afterResponse = [], returnErrorResponse = true, ...req } =
+      config || {};
 
     runFunctionHandlers(beforeRequest);
 
@@ -127,9 +98,7 @@ export class API {
   }
 }
 
-function runFunctionHandlers(
-  funcs?: ApiTypes.BeforeRequestFunction | ApiTypes.BeforeRequestFunction[]
-) {
+function runFunctionHandlers(funcs?: ApiTypes.BeforeRequestFunction | ApiTypes.BeforeRequestFunction[]) {
   if (funcs === undefined) return;
 
   if (typeof funcs === "function") {
@@ -139,10 +108,7 @@ function runFunctionHandlers(
   }
 }
 
-function runSuccessHandlers<R>(
-  data: R,
-  funcs?: ApiTypes.SuccessFunction<R> | ApiTypes.SuccessFunction<R>[]
-) {
+function runSuccessHandlers<R>(data: R, funcs?: ApiTypes.SuccessFunction<R> | ApiTypes.SuccessFunction<R>[]) {
   if (funcs === undefined) return;
 
   if (typeof funcs === "function") {
@@ -152,10 +118,7 @@ function runSuccessHandlers<R>(
   }
 }
 
-function runErrorHandlers(
-  error: AxiosResponse,
-  funcs?: ApiTypes.ErrorFunction | ApiTypes.ErrorFunction[]
-) {
+function runErrorHandlers(error: AxiosResponse, funcs?: ApiTypes.ErrorFunction | ApiTypes.ErrorFunction[]) {
   if (funcs === undefined) return;
 
   if (typeof funcs === "function") {

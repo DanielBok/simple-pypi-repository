@@ -1,6 +1,6 @@
-import * as UserAction from "./actions";
-import * as UserApi from "./api";
-import * as UserSelector from "./selectors";
-import * as UserType from "./types";
+import * as AccountAction from "./actions";
+import * as AccountApi from "./api";
+import * as AccountSelector from "./selectors";
+import * as AccountType from "./types";
 
-export { UserAction, UserApi, UserSelector, UserType };
+export { AccountAction, AccountApi, AccountSelector, AccountType };

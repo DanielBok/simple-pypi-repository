@@ -2,12 +2,12 @@ import AllActions from "@/infrastructure/rootAction";
 import produce from "immer";
 import { getType } from "typesafe-actions";
 
-import * as UserType from "./types";
-import * as UserAction from "./actions";
+import * as AccountType from "./types";
+import * as AccountAction from "./actions";
 
-const defaultState: UserType.Store = {
+const defaultState: AccountType.Store = {
   username: "",
-  password: "",
+  email: "",
   validated: false,
   loading: "SUCCESS"
 };
@@ -15,30 +15,30 @@ const defaultState: UserType.Store = {
 export default (state = defaultState, action: AllActions) =>
   produce(state, draft => {
     switch (action.type) {
-      case getType(UserAction.createUserAsync.request):
-      case getType(UserAction.fetchUserCredentialsAsync.request):
+      case getType(AccountAction.createUpdateAccountAsync.request):
+      case getType(AccountAction.fetchAccountCredentialsAsync.request):
         draft.loading = "REQUEST";
         break;
 
-      case getType(UserAction.createUserAsync.failure):
-      case getType(UserAction.fetchUserCredentialsAsync.failure):
+      case getType(AccountAction.createUpdateAccountAsync.failure):
+      case getType(AccountAction.fetchAccountCredentialsAsync.failure):
         draft.validated = false;
         draft.loading = "FAILURE";
         break;
 
-      case getType(UserAction.createUserAsync.success):
-      case getType(UserAction.fetchUserCredentialsAsync.success):
+      case getType(AccountAction.createUpdateAccountAsync.success):
+      case getType(AccountAction.fetchAccountCredentialsAsync.success):
         draft.validated = true;
         draft.loading = "SUCCESS";
-        draft.username = action.payload.channel;
-        draft.password = action.payload.password;
+        draft.username = action.payload.username;
+        draft.email = action.payload.email;
         break;
 
-      case getType(UserAction.logoutUser):
+      case getType(AccountAction.logoutAccount):
         draft.validated = false;
         draft.loading = "SUCCESS";
         draft.username = "";
-        draft.password = "";
+        draft.email = "";
         break;
     }
   });

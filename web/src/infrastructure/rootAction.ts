@@ -1,10 +1,8 @@
 import { PackageAction } from "@/features/package";
-import { UserAction } from "@/features/account";
+import { AccountAction } from "@/features/account";
 
 import { ActionType } from "typesafe-actions";
 
-type AllActions =
-  | ActionType<typeof UserAction>
-  | ActionType<typeof PackageAction>;
+type AllActions = ActionType<typeof AccountAction> | ActionType<typeof PackageAction>;
 
 export default AllActions;

@@ -1,16 +1,16 @@
 import { createAction, createAsyncAction } from "typesafe-actions";
-import * as UserType from "./types";
+import * as AccountType from "./types";
 
-export const createUserAsync = createAsyncAction(
-  "CREATE_USER_REQUEST",
-  "CREATE_USER_SUCCESS",
-  "CREATE_USER_FAILURE"
-)<void, UserType.UserInfo, void>();
+export const createUpdateAccountAsync = createAsyncAction(
+  "CREATE_UPDATE_ACCOUNT_REQUEST",
+  "CREATE_UPDATE_ACCOUNT_SUCCESS",
+  "CREATE_UPDATE_ACCOUNT_FAILURE"
+)<void, AccountType.AccountInfoRedacted, void>();
 
-export const fetchUserCredentialsAsync = createAsyncAction(
-  "FETCH_USER_CREDENTIALS_REQUEST",
-  "FETCH_USER_CREDENTIALS_SUCCESS",
-  "FETCH_USER_CREDENTIALS_FAILURE"
-)<void, UserType.UserInfo, void>();
+export const fetchAccountCredentialsAsync = createAsyncAction(
+  "FETCH_ACCOUNT_CREDENTIALS_REQUEST",
+  "FETCH_ACCOUNT_CREDENTIALS_SUCCESS",
+  "FETCH_ACCOUNT_CREDENTIALS_FAILURE"
+)<void, AccountType.AccountInfoRedacted, void>();
 
-export const logoutUser = createAction("LOGOUT_USER")<void>();
+export const logoutAccount = createAction("LOGOUT_ACCOUNT")<void>();
