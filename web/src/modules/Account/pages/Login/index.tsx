@@ -1,9 +1,12 @@
 import { AccountApi, AccountSelector } from "@/features/account";
+import { useThunkDispatch } from "@/infrastructure/hooks";
 import { Button, Form, Icon, Input } from "antd";
 import { WrappedFormUtils } from "antd/lib/form/Form";
 import { some } from "lodash";
+
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { Redirect } from "react-router-dom";
 import styles from "./styles.less";
 
 type Props = {
@@ -17,8 +20,9 @@ const USERNAME = "username",
 
 const LoginForm = ({ form: { getFieldDecorator, getFieldError, getFieldValue, isFieldTouched } }: Props) => {
   const [hasError, setHasError] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useThunkDispatch();
   const isLoading = useSelector(AccountSelector.isLoading);
+  const isValidated = useSelector(AccountSelector.accountValidated);
 
   // set enter to submit form
   useEffect(() => {
@@ -27,7 +31,12 @@ const LoginForm = ({ form: { getFieldDecorator, getFieldError, getFieldValue, is
     };
     document.addEventListener("keydown", listener);
     return () => document.removeEventListener("keydown", listener);
+    // eslint-disable-next-line
   }, []);
+
+  if (isValidated) {
+    return <Redirect to={"/projects"} />;
+  }
 
   return (
     <div className={styles.formBody}>
@@ -69,15 +78,17 @@ const LoginForm = ({ form: { getFieldDecorator, getFieldError, getFieldValue, is
   }
 
   async function login() {
-    const successful = ((await dispatch(
+    const successful = await dispatch(
       AccountApi.validateAccount({
         username: getFieldValue(USERNAME),
         password: getFieldValue(PASSWORD),
         email: "" // email is not required for logging in as it will be provided in the api response
       })
-    )) as unknown) as boolean;
+    );
 
-    setHasError(!successful);
+    // using if guard to prevent state update in useEffect hook when login is successful
+    // after all, no need to update hasError when login succeeds
+    if (!successful) setHasError(true);
   }
 };
 

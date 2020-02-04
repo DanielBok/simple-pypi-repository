@@ -4,8 +4,9 @@ import { WrappedFormUtils } from "antd/lib/form/Form";
 import { some } from "lodash";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import styles from "./styles.less";
+import { Redirect } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
+import styles from "./styles.less";
 
 type Props = {
   form: WrappedFormUtils;
@@ -23,6 +24,7 @@ const RegistrationForm = ({
 }: Props) => {
   const dispatch = useDispatch();
   const isLoading = useSelector(AccountSelector.isLoading);
+  const isValidated = useSelector(AccountSelector.accountValidated);
 
   const [checkValueAvailable] = useDebouncedCallback((key: string, value: string, callback: (msg?: string) => void) => {
     AccountApi.checkValueExists(value).then(exists => (exists ? callback(`${key} has been taken`) : callback()));
@@ -35,7 +37,12 @@ const RegistrationForm = ({
     };
     document.addEventListener("keydown", listener);
     return () => document.removeEventListener("keydown", listener);
+    // eslint-disable-next-line
   }, []);
+
+  if (isValidated) {
+    return <Redirect to={"/projects"} />;
+  }
 
   return (
     <div className={styles.formBody}>
