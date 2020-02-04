@@ -1,5 +1,5 @@
-from shutil import rmtree
 from pathlib import Path
+from shutil import rmtree
 
 from flask import Blueprint, abort, current_app, request
 
@@ -65,3 +65,11 @@ def validate_account():
         abort(404, error_message)
 
     return "", 200
+
+
+@bp.route("/check-exists/<user_or_email>")
+def check_user_or_email_exists(user_or_email):
+    if Account.find_account(user_or_email) is None:
+        return "", 404
+    else:
+        return "", 200

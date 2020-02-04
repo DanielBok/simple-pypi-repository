@@ -39,7 +39,10 @@ class Account(ResourceMixin, db.Model):
                     (func.lower(cls.email) == username_or_email)) \
             .one_or_none()
 
-        if account is None or password is None:
+        if account is None:
+            return None
+
+        if password is None:
             return account
 
         if not account.is_valid_password(password):
