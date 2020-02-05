@@ -14,6 +14,7 @@ export default () => {
 
   useEffect(() => {
     if (username) dispatch(PackageApi.fetchProjectsDetail(username));
+    // eslint-disable-next-line
   }, [username]);
 
   return (

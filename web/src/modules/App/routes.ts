@@ -13,8 +13,10 @@ const routeMap: Record<string, ModuleRoutes> = {
   },
   "/projects": {
     clusterName: "Projects",
-    routes: projectsRoutes
+    routes: projectsRoutes,
+    protected: true
   }
 };
 
+export const redirectPath = "/";
 export default routeMap;
