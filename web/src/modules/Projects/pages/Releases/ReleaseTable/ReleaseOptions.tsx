@@ -12,10 +12,6 @@ export default ({ version }: Props) => {
 
   const menu = (
     <Menu>
-      <Menu.Item key="1">
-        <Icon type="edit" theme="filled" />
-        Manage
-      </Menu.Item>
       <Menu.Item key="2">
         <Icon type="eye" theme="filled" />
         View

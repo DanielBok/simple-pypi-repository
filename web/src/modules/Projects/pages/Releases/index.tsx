@@ -19,6 +19,7 @@ type Props = RouteComponentProps<{
 
 const ReleaseInformation = (props: Props) => {
   useUserPackageEffect();
+
   const { packageName } = props.match.params;
   const { redirect, project } = useSelector((state: RootState) => {
     const loading = state.package.loading.projects === "REQUEST";
@@ -27,7 +28,7 @@ const ReleaseInformation = (props: Props) => {
     return { project, redirect: project.name === "" && !loading };
   }, isEqual);
 
-  if (redirect && false) {
+  if (redirect) {
     return <Redirect to="/projects" />;
   }
 
