@@ -7,12 +7,16 @@ from pkginfo import SDist, Wheel
 
 def package_information(package_folder: Path):
     # latest file path
-    path = max(package_folder.iterdir(), key=lambda x: os.path.getmtime(x.as_posix())).as_posix()
-    info = Wheel(path) if path.endswith('.whl') else SDist(path)
     details = version_details(package_folder)
+    summary, release_date = "", ""
+    if len(details) > 0:
+        path = max(package_folder.iterdir(), key=lambda x: os.path.getmtime(x.as_posix())).as_posix()
+        info = Wheel(path) if path.endswith('.whl') else SDist(path)
+        summary = info.summary,
+        release_date = datetime.fromtimestamp(os.path.getmtime(path)).strftime("%d %b %Y")
 
-    return {"summary": info.summary,
-            "release_date": datetime.fromtimestamp(os.path.getmtime(path)).strftime("%d %b %Y"),
+    return {"summary": summary,
+            "release_date": release_date,
             "version_details": details}
 
 

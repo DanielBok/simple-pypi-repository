@@ -44,7 +44,7 @@ def remove_lock(package_name: str, lock_id: int):
         return "Okay", 200
 
 
-@bp.route("/<package_name>/manage", defaults={"version": ""}, methods=['DELETE'])
+@bp.route("/<package_name>/manage", methods=['DELETE'])
 def remove_package(package_name):
     package = _fetch_validated_package(package_name)
     folder = PackageFolder(package.name)
