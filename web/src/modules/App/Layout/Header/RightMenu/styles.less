@@ -30,10 +30,13 @@
   background-color: @primary-color !important;
   padding: 0 !important;
 
+  @linkHeight: 50px;
+  @linkWidth: 180px;
+
   .menu-item {
     background-color: @primary-color;
-    min-height: 50px;
-    min-width: 180px;
+    min-height: @linkHeight;
+    min-width: @linkWidth;
     display: flex;
     align-items: center;
     border: solid 1px @primary-color-dark;
@@ -45,13 +48,17 @@
     .link {
       font-size: 1rem;
       color: #ffffff !important;
+      min-height: inherit;
+      min-width: inherit;
+      display: flex;
+      align-items: center;
 
       &:hover {
         text-decoration: none;
       }
 
       > i {
-        margin-right: 6px;
+        margin: 3px 6px 0 0;
       }
     }
   }
