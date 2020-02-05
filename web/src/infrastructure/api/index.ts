@@ -2,8 +2,8 @@ import { RootState } from "@/infrastructure/rootState";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosTransformer } from "axios";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
-import * as ApiTypes from "./types";
 import * as T from "./transformers";
+import * as ApiTypes from "./types";
 
 const apiUrl = !!process.env.REACT_APP_API_URL
   ? process.env.REACT_APP_API_URL
@@ -17,6 +17,7 @@ export class API {
       baseURL = apiUrl,
       transformRequest = [T.SnakeCaseKeysTransformer, ...(axios.defaults.transformRequest as AxiosTransformer[])],
       transformResponse = [...(axios.defaults.transformResponse as AxiosTransformer[]), T.CamelCaseKeysTransformer],
+      headers = { "Content-Type": "application/json" },
       ...rest
     } = config || {};
 
@@ -24,6 +25,7 @@ export class API {
       baseURL,
       transformRequest,
       transformResponse,
+      headers,
       ...rest
     });
   }
@@ -90,7 +92,6 @@ export class API {
       case "DELETE":
         if (payload) {
           config.data = payload;
-          config.headers = { "content-type": "application/json" };
         }
 
         return await this.client.delete<R>(endpoint, config);

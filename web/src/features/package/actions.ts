@@ -13,4 +13,10 @@ export const removePackageVersionAsync = createAsyncAction(
   "REMOVE_PACKAGE_VERSION_FAILURE"
 )<void, Pick<PackageType.ProjectInfo, "name" | "versionDetails">, void>();
 
+export const updatePackageDetail = createAsyncAction(
+  "UPDATE_PROJECTS_DETAIL_REQUEST",
+  "UPDATE_PROJECTS_DETAIL_SUCCESS",
+  "UPDATE_PROJECTS_DETAIL_FAILURE"
+)<void, Pick<PackageType.ProjectInfo, "name" | "allowOverride" | "private">, void>();
+
 export const resetLoadingStore = createAction("RESET_PACKAGE_LOADING_STORE")<void>();

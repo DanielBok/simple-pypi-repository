@@ -26,14 +26,36 @@ export const fetchProjectsDetail = (username: string): ThunkFunctionAsync => asy
   }
 };
 
+export const updatePackageMeta = (
+  payload: Pick<PackageType.ProjectInfo, "name" | "allowOverride" | "private">
+): ThunkFunctionAsync => async (dispatch, getState) => {
+  const { auth } = AccountStorage;
+  if (getState().package.loading.projects === "REQUEST" || auth === null) return;
+
+  await api.Put<typeof payload>(
+    "/package",
+    { ...payload, package: payload.name },
+    {
+      beforeRequest: () => dispatch(PackageAction.updatePackageDetail.request()),
+      onSuccess: data => {
+        notification.success({ message: "Package details updated successfully" });
+        dispatch(PackageAction.updatePackageDetail.success(data));
+      },
+      onError: () => {
+        notification.error({ message: "Package details update failed" });
+        dispatch(PackageAction.updatePackageDetail.failure());
+      },
+      auth
+    }
+  );
+};
+
 export const removePackageVersion = (packageName: string, version: string): ThunkFunctionAsync => async (
   dispatch,
   getState
 ) => {
-  const account = AccountStorage.load();
-  if (getState().package.loading.projects === "REQUEST") return;
-  if (account === null) return;
-  const { username, password } = account;
+  const { auth } = AccountStorage;
+  if (getState().package.loading.projects === "REQUEST" || auth === null) return;
 
   await api.Delete<PackageType.ProjectVersionDetails[]>(`package/${packageName}/manage/${version}`, undefined, {
     beforeRequest: () => dispatch(PackageAction.removePackageVersionAsync.request()),
@@ -50,6 +72,6 @@ export const removePackageVersion = (packageName: string, version: string): Thun
       notification.error({ message: "could not remove package version" });
       dispatch(PackageAction.removePackageVersionAsync.failure());
     },
-    auth: { username, password }
+    auth
   });
 };
