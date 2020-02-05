@@ -14,12 +14,14 @@ const defaultState: PackageType.Store = {
 export default (state = defaultState, action: AllActions) =>
   produce(state, draft => {
     switch (action.type) {
+      case getType(Action.removePackageAsync.request):
       case getType(Action.updatePackageDetail.request):
       case getType(Action.removePackageVersionAsync.request):
       case getType(Action.fetchProjectsDetailAsync.request):
         draft.loading.projects = "REQUEST";
         break;
 
+      case getType(Action.removePackageAsync.failure):
       case getType(Action.updatePackageDetail.failure):
       case getType(Action.removePackageVersionAsync.failure):
       case getType(Action.fetchProjectsDetailAsync.failure):
@@ -50,6 +52,11 @@ export default (state = defaultState, action: AllActions) =>
           draft.projects[index].private = rest.private;
           draft.projects[index].allowOverride = rest.allowOverride;
         }
+        break;
       }
+
+      case getType(Action.removePackageAsync.success):
+        draft.projects = draft.projects.filter(e => e.name !== action.payload);
+        break;
     }
   });

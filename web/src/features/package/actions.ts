@@ -7,6 +7,12 @@ export const fetchProjectsDetailAsync = createAsyncAction(
   "FETCH_PROJECTS_DETAIL_FAILURE"
 )<void, PackageType.ProjectInfo[], void>();
 
+export const removePackageAsync = createAsyncAction(
+  "REMOVE_PACKAGE_REQUEST",
+  "REMOVE_PACKAGE_SUCCESS",
+  "REMOVE_PACKAGE_FAILURE"
+)<void, string, void>();
+
 export const removePackageVersionAsync = createAsyncAction(
   "REMOVE_PACKAGE_VERSION_REQUEST",
   "REMOVE_PACKAGE_VERSION_SUCCESS",
