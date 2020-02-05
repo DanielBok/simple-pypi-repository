@@ -23,7 +23,7 @@ export default () => {
       className={styles.deleteModal}
       footer={[
         <Button key="back" onClick={closeModal} disabled={loading}>
-          Return
+          Cancel
         </Button>,
         <Button
           key="delete"
@@ -32,7 +32,7 @@ export default () => {
           onClick={executePackageVersionRemoval}
           loading={loading}
         >
-          Submit
+          Delete Release
         </Button>
       ]}
     >
@@ -41,12 +41,13 @@ export default () => {
       </Typography.Paragraph>
       <Typography.Paragraph>Confirm the version to continue</Typography.Paragraph>
       <Form.Item label={<span className={styles.formItemLabel}>Version</span>} colon={false}>
-        <Input value={confirm} onChange={e => setConfirm(e.target.value)} />
+        <Input value={confirm} onChange={e => setConfirm(e.target.value)} placeholder={version} />
       </Form.Item>
     </Modal>
   );
 
   async function executePackageVersionRemoval() {
     await dispatch(PackageApi.removePackageVersion(name, version));
+    closeModal();
   }
 };
