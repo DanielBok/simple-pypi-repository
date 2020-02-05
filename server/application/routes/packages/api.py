@@ -1,10 +1,9 @@
-from pathlib import Path
-from shutil import rmtree
-
-from flask import Blueprint, abort, current_app, request
+from flask import Blueprint, abort, jsonify, request
 
 from application.models import Package, PackageLock
+from application.routes.projects.package_info import version_details
 from application.utils import get_account
+from .filesys import PackageFolder
 
 bp = Blueprint("package_api", __name__)
 
@@ -16,19 +15,6 @@ def update_package_settings():
 
     package.update(data['allow_override'], data['private'])
     return package.to_dict()
-
-
-@bp.route("/", methods=["DELETE"])
-def delete_package():
-    data = request.get_json()
-    pkg = _fetch_validated_package(data['package'])
-
-    pkg_folder = Path(current_app.config['PACKAGE_FOLDER']).joinpath(pkg.name)
-    if pkg_folder.exists():
-        rmtree(pkg_folder, True)
-
-    pkg.delete()
-    return "", 200
 
 
 @bp.route('/<package_name>', methods=['GET'])
@@ -56,6 +42,25 @@ def remove_lock(package_name: str, lock_id: int):
     else:
         lock.delete()
         return "Okay", 200
+
+
+@bp.route("/<package_name>/manage", defaults={"version": ""}, methods=['DELETE'])
+def remove_package(package_name):
+    package = _fetch_validated_package(package_name)
+    folder = PackageFolder(package.name)
+
+    folder.remove_all_packages()
+    package.delete()
+    return "Okay", 200
+
+
+@bp.route("/<package_name>/manage/<version>", methods=['DELETE'])
+def remove_package_version(package_name, version):
+    package = _fetch_validated_package(package_name)
+    folder = PackageFolder(package.name)
+
+    folder.remove_version(version)
+    return jsonify(version_details(folder.path))
 
 
 def _fetch_validated_package(package_name: str) -> Package:

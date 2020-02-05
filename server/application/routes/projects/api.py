@@ -3,7 +3,7 @@ from pathlib import Path
 from flask import Blueprint, current_app, jsonify
 
 from application.utils import get_account
-from .filesys import package_information
+from .package_info import package_information
 
 bp = Blueprint("project_api", __name__)
 
