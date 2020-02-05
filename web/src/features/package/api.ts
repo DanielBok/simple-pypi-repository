@@ -9,7 +9,7 @@ import * as PackageType from "./types";
 export const fetchProjectsDetail = (username: string): ThunkFunctionAsync => async (dispatch, getState) => {
   if (getState().package.loading.projects === "REQUEST") return;
 
-  const { data, status } = await api.Get<PackageType.ProjectInfo[]>(`package/${username}/project-details`, {
+  const { data, status } = await api.Get<PackageType.ProjectInfo[]>(`project/${username}`, {
     beforeRequest: () => dispatch(PackageAction.fetchProjectsDetailAsync.request()),
     onError: e => {
       notification.error({

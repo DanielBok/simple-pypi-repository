@@ -1,11 +1,10 @@
 from pathlib import Path
 from shutil import rmtree
 
-from flask import Blueprint, abort, current_app, jsonify, request
+from flask import Blueprint, abort, current_app, request
 
 from application.models import Package, PackageLock
-from .filesys import package_information
-from .operations import get_account
+from application.utils import get_account
 
 bp = Blueprint("package_api", __name__)
 
@@ -57,16 +56,6 @@ def remove_lock(package_name: str, lock_id: int):
     else:
         lock.delete()
         return "Okay", 200
-
-
-@bp.route("/<username>/project-details")
-def get_projects(username):
-    account = get_account(abort_if_invalid=False, username=username)
-
-    return jsonify([{
-        **p.to_dict(),
-        **package_information(Path(current_app.config['PACKAGE_FOLDER']).joinpath(p.name))
-    } for p in account.packages])
 
 
 def _fetch_validated_package(package_name: str) -> Package:

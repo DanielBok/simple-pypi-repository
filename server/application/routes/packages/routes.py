@@ -3,7 +3,8 @@ import re
 from flask import Blueprint, abort, current_app, request
 
 from application.models import Package
-from .operations import GetHandler, PostHandler, get_account
+from application.utils import get_account
+from .operations import GetHandler, PostHandler
 
 bp = Blueprint("packages", __name__, template_folder="templates")
 
