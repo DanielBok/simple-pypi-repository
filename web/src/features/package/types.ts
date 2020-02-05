@@ -11,4 +11,12 @@ export type ProjectInfo = {
   private: boolean;
   releaseDate: string;
   summary: string;
+  versionDetails: ProjectVersionDetails[];
+};
+
+export type ProjectVersionDetails = {
+  version: string;
+  releaseDate: string;
+  wheel: number;
+  source: number;
 };

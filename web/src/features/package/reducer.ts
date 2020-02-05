@@ -14,10 +14,12 @@ const defaultState: PackageType.Store = {
 export default (state = defaultState, action: AllActions) =>
   produce(state, draft => {
     switch (action.type) {
+      case getType(Action.removePackageVersionAsync.request):
       case getType(Action.fetchProjectsDetailAsync.request):
         draft.loading.projects = "REQUEST";
         break;
 
+      case getType(Action.removePackageVersionAsync.failure):
       case getType(Action.fetchProjectsDetailAsync.failure):
         draft.loading.projects = "FAILURE";
         break;
@@ -26,5 +28,14 @@ export default (state = defaultState, action: AllActions) =>
         draft.loading.projects = "SUCCESS";
         draft.projects = action.payload;
         break;
+
+      case getType(Action.removePackageVersionAsync.success): {
+        draft.loading.projects = "SUCCESS";
+        const { name, versionDetails } = action.payload;
+        const index = draft.projects.findIndex(e => e.name === name);
+        if (index >= 0) {
+          draft.projects[index].versionDetails = versionDetails;
+        }
+      }
     }
   });

@@ -7,7 +7,10 @@ export const fetchProjectsDetailAsync = createAsyncAction(
   "FETCH_PROJECTS_DETAIL_FAILURE"
 )<void, PackageType.ProjectInfo[], void>();
 
+export const removePackageVersionAsync = createAsyncAction(
+  "REMOVE_PACKAGE_VERSION_REQUEST",
+  "REMOVE_PACKAGE_VERSION_SUCCESS",
+  "REMOVE_PACKAGE_VERSION_FAILURE"
+)<void, Pick<PackageType.ProjectInfo, "name" | "versionDetails">, void>();
 
-export const resetLoadingStore = createAction("RESET_PACKAGE_LOADING_STORE")<
-  void
->();
+export const resetLoadingStore = createAction("RESET_PACKAGE_LOADING_STORE")<void>();
