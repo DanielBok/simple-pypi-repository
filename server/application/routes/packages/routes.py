@@ -50,8 +50,8 @@ def get_formatted_package_name():
     if package_name == "":
         abort(400, 'package name not provided')
 
-    if re.fullmatch('[_a-z0-9]+', package_name) is None:
-        abort(400, 'Package name should only consist of lower-case alphabets, underscores and numbers. '
+    if re.fullmatch(r'[\-_a-z0-9]+', package_name) is None:
+        abort(400, 'Package name should only consist of lower-case alphabets, underscores, hyphens and numbers. '
                    'See https://www.python.org/dev/peps/pep-0008/#package-and-module-names for more '
                    'information')
 
