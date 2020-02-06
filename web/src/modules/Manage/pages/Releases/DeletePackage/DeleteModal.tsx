@@ -45,6 +45,6 @@ export default ({ visible, closeModal }: Props) => {
   async function removePackage() {
     await dispatch(PackageApi.removePackage(name));
     closeModal();
-    dispatch(push("/projects"));
+    dispatch(push("/manage"));
   }
 };

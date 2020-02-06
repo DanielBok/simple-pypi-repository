@@ -1,6 +1,6 @@
 import { PackageSelector } from "@/features/package";
 import { RootState } from "@/infrastructure/rootState";
-import { useUserPackagesEffect } from "@/modules/Projects/hooks";
+import { useUserPackagesEffect } from "@/modules/Manage/hooks";
 import { Divider } from "antd";
 import { isEqual } from "lodash";
 import React from "react";
@@ -31,7 +31,7 @@ const ReleaseInformation = (props: Props) => {
   }, isEqual);
 
   if (redirect) {
-    return <Redirect to="/projects" />;
+    return <Redirect to="/manage" />;
   }
 
   const components = [

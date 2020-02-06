@@ -41,7 +41,7 @@ const RegistrationForm = ({
   }, []);
 
   if (isValidated) {
-    return <Redirect to="/projects" />;
+    return <Redirect to="/manage" />;
   }
 
   return (

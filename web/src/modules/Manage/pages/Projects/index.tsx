@@ -1,5 +1,5 @@
 import { PackageSelector } from "@/features/package";
-import { useUserPackagesEffect } from "@/modules/Projects/hooks";
+import { useUserPackagesEffect } from "@/modules/Manage/hooks";
 import BoxImg from "@/resources/whitebox.svg";
 import { Button, Card, Typography } from "antd";
 import { push } from "connected-react-router";
@@ -27,7 +27,7 @@ export default () => {
             </div>
 
             <div className={styles.actions}>
-              <Button type="primary" size="large" onClick={() => dispatch(push(`/projects/release/${name}`))}>
+              <Button type="primary" size="large" onClick={() => dispatch(push(`/manage/release/${name}`))}>
                 Manage
               </Button>
               <Button size="large">View</Button>

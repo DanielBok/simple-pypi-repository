@@ -35,7 +35,7 @@ const DropdownMenu = () => {
   const dispatch = useDispatch();
   const items: MenuLinkProps[] = [
     { to: "/account/setting", iconType: "setting", text: "Account Settings" },
-    { to: "/projects", iconType: "appstore", text: "Projects" }
+    { to: "/manage", iconType: "appstore", text: "Manage Projects" }
   ];
 
   return (

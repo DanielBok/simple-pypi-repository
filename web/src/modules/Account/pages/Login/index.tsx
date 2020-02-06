@@ -35,7 +35,7 @@ const LoginForm = ({ form: { getFieldDecorator, getFieldError, getFieldValue, is
   }, []);
 
   if (isValidated) {
-    return <Redirect to="/projects" />;
+    return <Redirect to="/manage" />;
   }
 
   return (
