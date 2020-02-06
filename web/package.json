@@ -26,6 +26,7 @@
     "ts-optchain": "^0.1.8",
     "typesafe-actions": "^5.1.0",
     "typescript": "^3.7.5",
+    "use-clipboard-copy": "^0.1.2",
     "use-debounce": "^3.3.0"
   },
   "devDependencies": {

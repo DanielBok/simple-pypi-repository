@@ -1,6 +1,7 @@
 import accountRoutes from "@/modules/Account";
 import homeRoutes from "@/modules/Home";
-import projectsRoutes from "@/modules/Manage";
+import manageRoutes from "@/modules/Manage";
+import projectRoutes from "@/modules/Project";
 
 const routeMap: Record<string, ModuleRoutes> = {
   "/": {
@@ -13,8 +14,12 @@ const routeMap: Record<string, ModuleRoutes> = {
   },
   "/manage": {
     clusterName: "Manage",
-    routes: projectsRoutes,
+    routes: manageRoutes,
     protected: true
+  },
+  "/project": {
+    clusterName: "Project",
+    routes: projectRoutes
   }
 };
 
