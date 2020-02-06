@@ -1,5 +1,5 @@
 import { PackageSelector } from "@/features/package";
-import { useUserPackageEffect } from "@/modules/Projects/hooks";
+import { useUserPackagesEffect } from "@/modules/Projects/hooks";
 import BoxImg from "@/resources/whitebox.svg";
 import { Button, Card, Typography } from "antd";
 import { push } from "connected-react-router";
@@ -11,7 +11,7 @@ import styles from "./styles.less";
 export default () => {
   const dispatch = useDispatch();
   const projects = useSelector(PackageSelector.projectDetails, isEqual);
-  useUserPackageEffect();
+  useUserPackagesEffect();
 
   return (
     <div className={styles.container}>

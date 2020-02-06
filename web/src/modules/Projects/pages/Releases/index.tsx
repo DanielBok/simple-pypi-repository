@@ -1,6 +1,6 @@
 import { PackageSelector } from "@/features/package";
 import { RootState } from "@/infrastructure/rootState";
-import { useUserPackageEffect } from "@/modules/Projects/hooks";
+import { useUserPackagesEffect } from "@/modules/Projects/hooks";
 import { Divider } from "antd";
 import { isEqual } from "lodash";
 import React from "react";
@@ -18,11 +18,11 @@ type Props = RouteComponentProps<{
 }>;
 
 const ReleaseInformation = (props: Props) => {
-  useUserPackageEffect();
+  useUserPackagesEffect();
 
   const { packageName } = props.match.params;
   const { redirect, project } = useSelector((state: RootState) => {
-    const loading = state.package.loading.projects === "REQUEST";
+    const loading = state.package.loading.packages === "REQUEST";
     const project = PackageSelector.projectDetail(packageName)(state);
 
     return { project, redirect: project.name === "" && !loading };

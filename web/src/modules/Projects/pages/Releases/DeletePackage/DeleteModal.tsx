@@ -27,7 +27,7 @@ export default ({ visible, closeModal }: Props) => {
         <Button key="back" onClick={closeModal} disabled={loading}>
           Cancel
         </Button>,
-        <Button key="delete" type="primary" disabled={confirm !== name} onClick={removePackage} loading={loading}>
+        <Button key="delete" type="danger" disabled={confirm !== name} onClick={removePackage} loading={loading}>
           Delete Package
         </Button>
       ]}

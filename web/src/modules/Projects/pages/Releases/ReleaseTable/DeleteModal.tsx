@@ -27,7 +27,7 @@ export default () => {
         </Button>,
         <Button
           key="delete"
-          type="primary"
+          type="danger"
           disabled={confirm !== version}
           onClick={executePackageVersionRemoval}
           loading={loading}
@@ -48,6 +48,5 @@ export default () => {
 
   async function executePackageVersionRemoval() {
     await dispatch(PackageApi.removePackageVersion(name, version));
-    closeModal();
   }
 };

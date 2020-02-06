@@ -5,9 +5,18 @@ import * as Action from "./actions";
 import * as PackageType from "./types";
 
 const defaultState: PackageType.Store = {
-  projects: [],
+  packages: [],
+  packageInfo: {
+    allowOverride: false,
+    name: "",
+    private: false,
+    locks: [],
+    releaseDate: "",
+    summary: "",
+    versionDetails: []
+  },
   loading: {
-    projects: "SUCCESS"
+    packages: "SUCCESS"
   }
 };
 
@@ -17,46 +26,46 @@ export default (state = defaultState, action: AllActions) =>
       case getType(Action.removePackageAsync.request):
       case getType(Action.updatePackageDetail.request):
       case getType(Action.removePackageVersionAsync.request):
-      case getType(Action.fetchProjectsDetailAsync.request):
-        draft.loading.projects = "REQUEST";
+      case getType(Action.fetchPackagesDetailAsync.request):
+        draft.loading.packages = "REQUEST";
         break;
 
       case getType(Action.removePackageAsync.failure):
       case getType(Action.updatePackageDetail.failure):
       case getType(Action.removePackageVersionAsync.failure):
-      case getType(Action.fetchProjectsDetailAsync.failure):
-        draft.loading.projects = "FAILURE";
+      case getType(Action.fetchPackagesDetailAsync.failure):
+        draft.loading.packages = "FAILURE";
         break;
 
-      case getType(Action.fetchProjectsDetailAsync.success):
-        draft.loading.projects = "SUCCESS";
-        draft.projects = action.payload;
+      case getType(Action.fetchPackagesDetailAsync.success):
+        draft.loading.packages = "SUCCESS";
+        draft.packages = action.payload;
         break;
 
       case getType(Action.removePackageVersionAsync.success): {
-        draft.loading.projects = "SUCCESS";
+        draft.loading.packages = "SUCCESS";
         const { name, versionDetails } = action.payload;
-        const index = draft.projects.findIndex(e => e.name === name);
+        const index = draft.packages.findIndex(e => e.name === name);
         if (index >= 0) {
-          draft.projects[index].versionDetails = versionDetails;
+          draft.packages[index].versionDetails = versionDetails;
         }
         break;
       }
 
       case getType(Action.updatePackageDetail.success): {
-        draft.loading.projects = "SUCCESS";
+        draft.loading.packages = "SUCCESS";
         const { name, ...rest } = action.payload;
 
-        const index = draft.projects.findIndex(e => e.name === name);
+        const index = draft.packages.findIndex(e => e.name === name);
         if (index >= 0) {
-          draft.projects[index].private = rest.private;
-          draft.projects[index].allowOverride = rest.allowOverride;
+          draft.packages[index].private = rest.private;
+          draft.packages[index].allowOverride = rest.allowOverride;
         }
         break;
       }
 
       case getType(Action.removePackageAsync.success):
-        draft.projects = draft.projects.filter(e => e.name !== action.payload);
+        draft.packages = draft.packages.filter(e => e.name !== action.payload);
         break;
     }
   });

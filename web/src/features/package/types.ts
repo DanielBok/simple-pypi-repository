@@ -1,22 +1,41 @@
 export type Store = {
-  projects: ProjectInfo[];
+  packages: PackageInfo[];
+  packageInfo: PackageInfo;
   loading: {
-    projects: LoadingState;
+    packages: LoadingState;
   };
 };
 
-export type ProjectInfo = {
+export type PackageInfo = {
   allowOverride: boolean;
   name: string;
   private: boolean;
+  locks: PackageLock[];
   releaseDate: string;
   summary: string;
-  versionDetails: ProjectVersionDetails[];
+  versionDetails: VersionDetail[];
 };
 
-export type ProjectVersionDetails = {
+export type PackageLock = {
+  id: string;
+  description: string;
+  token: string;
+};
+
+export type VersionDetail = {
   version: string;
   releaseDate: string;
-  wheel: number;
-  source: number;
+  files: FileDetail[];
+  count: {
+    wheel: number;
+    source: number;
+  };
+};
+
+export type FileDetail = {
+  filename: string;
+  size: string;
+  type: "Wheel" | "Source";
+  pythonVersion: string;
+  uploadDate: string;
 };

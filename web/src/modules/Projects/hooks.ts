@@ -3,12 +3,12 @@ import { PackageApi } from "@/features/package";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-export const useUserPackageEffect = () => {
+export const useUserPackagesEffect = () => {
   const dispatch = useDispatch();
   const { username } = useSelector(AccountSelector.accountInfo);
 
   useEffect(() => {
-    if (username) dispatch(PackageApi.fetchProjectsDetail(username));
+    if (username) dispatch(PackageApi.fetchPackages());
     // eslint-disable-next-line
   }, [username]);
 };

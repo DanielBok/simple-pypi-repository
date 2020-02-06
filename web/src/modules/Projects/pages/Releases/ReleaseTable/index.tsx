@@ -9,15 +9,15 @@ import styles from "./styles.less";
 
 export default () => {
   const { versionDetails } = useRouteContext();
-  const columns: ColumnProps<PackageType.ProjectVersionDetails>[] = [
+  const columns: ColumnProps<PackageType.VersionDetail>[] = [
     { title: "Version", dataIndex: "version" },
     { title: "Release Date", dataIndex: "releaseDate" },
     {
       title: "Files",
-      render: (_, { wheel, source }) => {
+      render: (_, { count: { wheel, source } }) => {
         const pkg = [];
         if (wheel > 0) pkg.push(`${wheel} Wheel`);
-        if (source > 0) pkg.push(`${wheel} Source`);
+        if (source > 0) pkg.push(`${source} Source`);
 
         return `${wheel + source} files (${pkg.join(", ")})`;
       }
