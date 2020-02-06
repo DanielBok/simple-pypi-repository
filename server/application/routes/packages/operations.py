@@ -65,12 +65,13 @@ class GetHandler:
 
     @property
     def token(self) -> Optional[str]:
+        if request.authorization is not None:
+            return request.authorization['username']
+
         if (auth_str := request.headers.get('Authorization', "")) != "":
             return b64decode(auth_str.split()[1]).decode()
 
-        if request.authorization is None:
-            return None
-        return request.authorization['username']
+        return None
 
     @property
     def is_pip(self) -> bool:
