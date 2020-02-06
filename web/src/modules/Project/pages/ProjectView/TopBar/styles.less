@@ -1,43 +1,75 @@
 @import (reference) "../styles";
 
-.bar {
+.page-header {
   color: white;
   margin-bottom: 24px;
+  background-color: @primary-color !important;
+  border: 1px solid rgb(235, 237, 240);
 
-  .title-portion {
+  .title {
+    color: #ffffff;
+    font-size: 1.8rem;
+  }
+}
+
+.bar {
+  display: flex;
+  color: #ffffff;
+
+  .left-portion {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    border: 1px solid rgb(235, 237, 240);
 
-    .title {
-      font-size: 1.8rem;
-    }
-  }
+    .pip-instructions {
+      display: flex;
+      font-family: Source Code Pro, monospace;
+      font-weight: 500;
+      font-size: 1rem;
+      float: left;
+      background-color: rgba(0, 0, 0, 0.35);
+      padding: 8px;
+      border: 1px dotted hsla(0, 0%, 100%, 0.4);
+      line-height: 30px;
+      align-items: center;
 
-  .pip-instructions {
-    font-family: Source Code Pro, monospace;
-    font-weight: 500;
-    font-size: 1.2rem;
-    float: left;
-    background-color: rgba(0, 0, 0, 0.35);
-    padding: 8px;
-    border: 1px dotted hsla(0, 0%, 100%, 0.4);
-    line-height: 30px;
-    width: 100%;
+      .copy-icon {
+        cursor: pointer;
+        color: #dde6fb;
+        margin-left: 20px;
 
-    .copy-icon {
-      cursor: pointer;
-      color: #dde6fb;
-      margin-left: 20px;
-
-      &:hover {
-        color: @primary-color;
+        &:hover {
+          color: @primary-color;
+        }
       }
     }
   }
 
-  .other-portion {
+  .right-portion {
     display: flex;
+    flex-direction: column;
+    margin-left: auto;
+
+    .version-box {
+      color: white;
+      cursor: pointer;
+      text-align: center;
+      padding: 8px;
+      border: 0.8px solid white;
+      border-radius: 0.25rem;
+      margin: 0 0 20px 12px;
+    }
+
+    .latest {
+      background-color: #148024;
+    }
+
+    .outdated {
+      background-color: #d52d40;
+    }
+
+    .release-date {
+      font-size: 1rem;
+      min-width: 3rem;
+    }
   }
 }

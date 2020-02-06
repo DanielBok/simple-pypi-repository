@@ -8,7 +8,7 @@ import ReleaseOptions from "./ReleaseOptions";
 import styles from "./styles.less";
 
 export default () => {
-  const { versionDetails } = useRouteContext();
+  const { name, versionDetails } = useRouteContext();
   const columns: ColumnProps<PackageType.VersionDetail>[] = [
     { title: "Version", dataIndex: "version" },
     { title: "Release Date", dataIndex: "releaseDate" },
@@ -24,7 +24,7 @@ export default () => {
     },
     {
       title: "",
-      render: (_, { version }) => <ReleaseOptions version={version} />
+      render: (_, { version }) => <ReleaseOptions version={version} name={name} />
     }
   ];
 

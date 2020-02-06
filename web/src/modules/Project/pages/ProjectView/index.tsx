@@ -13,14 +13,15 @@ const ProjectView = ({
   }
 }: Props) => {
   const dispatch = useDispatch();
-  const noVersion = useSelector(ProjectSelector.hasProjectVersion(version));
+  const hasVersion = useSelector(ProjectSelector.hasProjectVersion(version));
 
   useEffect(() => {
+    console.log(project, version);
     dispatch(ProjectApi.fetchProjectDetail(project, version));
     // eslint-disable-next-line
   }, [project, version]);
 
-  if (noVersion) {
+  if (!hasVersion) {
     return null;
   }
 

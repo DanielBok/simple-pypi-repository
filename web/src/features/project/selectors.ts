@@ -11,7 +11,8 @@ export const project = (state: RootState) => state.project.project;
 
 export const hasProjectVersion = (version = "") => (state: RootState) => {
   if (projectLoadingStatus(state) === "FAILURE") return false;
-  return !(projectLoadingStatus(state) === "SUCCESS" && !state.project.projects.hasOwnProperty(version));
+  if (version === "") return true;
+  return projectLoadingStatus(state) === "SUCCESS" && state.project.projects.hasOwnProperty(version);
 };
 
 export const projectLoadingStatus = (state: RootState) => state.project.loading.project;

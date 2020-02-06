@@ -30,7 +30,9 @@ export default () => {
               <Button type="primary" size="large" onClick={() => dispatch(push(`/manage/release/${name}`))}>
                 Manage
               </Button>
-              <Button size="large">View</Button>
+              <Button size="large" onClick={() => dispatch(push(`/project/${name}/desc`))}>
+                View
+              </Button>
             </div>
           </div>
         </Card>
