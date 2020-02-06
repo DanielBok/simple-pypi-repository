@@ -6,6 +6,7 @@ from pathlib import Path
 from shutil import rmtree
 
 from flask import current_app
+from markdown import markdown
 from pkginfo import SDist, Wheel
 
 
@@ -50,7 +51,7 @@ class PackageFolder:
                 "version": version,
                 "summary": info.summary,
                 "release_date": max_date,
-                "description": info.description,
+                "description": markdown(info.description),
                 "content_type": info.description_content_type,
                 "files": files,
                 "count": {
