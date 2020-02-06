@@ -1,8 +1,8 @@
 import { RootState } from "@/infrastructure/rootState";
 
 export const projectMeta = (state: RootState) => {
-  const { name, latestVersion } = state.project;
-  return { name, latestVersion };
+  const { name, latestVersion, isPrivate } = state.project;
+  return { name, latestVersion, isPrivate };
 };
 
 export const projects = (state: RootState) => state.project.projects;

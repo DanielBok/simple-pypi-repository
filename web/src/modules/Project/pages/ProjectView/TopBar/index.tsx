@@ -30,20 +30,22 @@ export default () => {
 };
 
 const LeftPortion = () => {
-  const { name, latestVersion } = useSelector(ProjectSelector.projectMeta);
+  const { name, latestVersion, isPrivate } = useSelector(ProjectSelector.projectMeta);
   const { version, summary } = useSelector(ProjectSelector.project);
   const clipboard = useClipboard();
 
-  const command = `pip install --extra-index-url ${serverUrl}/simple ${name}${
-    latestVersion !== version ? "==" + version : ""
-  }`;
+  const [protocol, host] = serverUrl.split("://");
+  const url = isPrivate ? `${protocol}://<token>@${host}` : serverUrl;
+
+  const cmd = `pip install --extra-index-url ${url}/simple ${name}${latestVersion !== version ? "==" + version : ""}`;
 
   return (
     <div className={styles.leftPortion}>
       <p>{summary}</p>
+      {isPrivate && <p>Package is private and requires a token for installation</p>}
       <div className={styles.pipInstructions}>
         <div>
-          {command} <input ref={clipboard.target} value={command} readOnly style={{ display: "none" }} />
+          {cmd} <input ref={clipboard.target} value={cmd} readOnly style={{ display: "none" }} />
         </div>
         <Icon
           type="copy"

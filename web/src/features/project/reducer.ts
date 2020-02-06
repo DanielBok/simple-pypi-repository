@@ -19,6 +19,7 @@ const defaultState: Type.Store = {
       wheel: 0
     }
   },
+  isPrivate: false,
   name: "",
   latestVersion: "",
   loading: {
@@ -38,11 +39,12 @@ export default (state = defaultState, action: AllActions) =>
         break;
 
       case getType(Action.fetchProjectDetailAsync.success): {
-        const { name, projects, version, latestVersion } = action.payload;
+        const { name, projects, version, latestVersion, private: isPrivate } = action.payload;
 
         draft.loading.project = "SUCCESS";
         draft.projects = projects.reduce((d, p) => ({ ...d, [p.version]: p }), {} as Type.Store["projects"]);
         draft.name = name;
+        draft.isPrivate = isPrivate;
         draft.latestVersion = latestVersion;
         draft.project =
           version === "" ? draft.projects[latestVersion] : oc(draft.projects[version])({ ...defaultState.project });
