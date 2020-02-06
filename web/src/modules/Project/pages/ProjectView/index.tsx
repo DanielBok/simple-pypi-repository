@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import Description from "./Description";
+import DownloadFiles from "./DownloadFiles";
 import ReleaseHistory from "./ReleaseHistory";
 import styles from "./styles.less";
 import TabTitle from "./TabTitle";
@@ -33,7 +34,7 @@ const ProjectView = ({
   return (
     <div className={styles.container}>
       <TopBar />
-      <Tabs defaultActiveKey="2">
+      <Tabs defaultActiveKey="1">
         <TabPane tab={<TabTitle type="align-left" title="Project description" />} key="1">
           <Description />
         </TabPane>
@@ -41,7 +42,7 @@ const ProjectView = ({
           <ReleaseHistory />
         </TabPane>
         <TabPane tab={<TabTitle type="download" title="Download files" />} key="3">
-          Content of Tab Pane 3
+          <DownloadFiles />
         </TabPane>
       </Tabs>
     </div>

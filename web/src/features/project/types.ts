@@ -26,7 +26,7 @@ export type ProjectInfo = {
 
 export type FileDetail = {
   filename: string;
-  size: string;
+  size: number;
   type: "Wheel" | "Source";
   pythonVersion: string;
   uploadDate: string;
