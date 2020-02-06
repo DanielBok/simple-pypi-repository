@@ -2,9 +2,9 @@ import { createAsyncAction } from "typesafe-actions";
 import * as PackageType from "./types";
 
 export const fetchPackagesDetailAsync = createAsyncAction(
-  "FETCH_PROJECTS_DETAIL_REQUEST",
-  "FETCH_PROJECTS_DETAIL_SUCCESS",
-  "FETCH_PROJECTS_DETAIL_FAILURE"
+  "FETCH_PACKAGES_DETAIL_REQUEST",
+  "FETCH_PACKAGES_DETAIL_SUCCESS",
+  "FETCH_PACKAGES_DETAIL_FAILURE"
 )<void, PackageType.PackageInfo[], void>();
 
 export const removePackageAsync = createAsyncAction(

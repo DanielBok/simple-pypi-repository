@@ -5,9 +5,11 @@ import { ThunkDispatch } from "redux-thunk";
 import * as T from "./transformers";
 import * as ApiTypes from "./types";
 
-const apiUrl = !!process.env.REACT_APP_API_URL
-  ? process.env.REACT_APP_API_URL
-  : `${window.location.protocol}//${window.location.hostname}:9090/api`;
+export const serverUrl = !!process.env.REACT_APP_SERVER_URL
+  ? process.env.REACT_APP_SERVER_URL
+  : `${window.location.protocol}//${window.location.hostname}:9090`;
+
+const apiUrl = `${serverUrl}/api`;
 
 export class API {
   private client: AxiosInstance;
