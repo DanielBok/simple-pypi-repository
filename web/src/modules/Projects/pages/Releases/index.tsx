@@ -10,7 +10,9 @@ import CardTitle from "./CardTitle";
 import ControlPanel from "./ControlPanel";
 import DeletePackage from "./DeletePackage";
 import { RouteContext } from "./hooks";
+import Locks from "./Locks";
 import ReleaseTable from "./ReleaseTable";
+
 import styles from "./styles.less";
 
 type Props = RouteComponentProps<{
@@ -32,14 +34,23 @@ const ReleaseInformation = (props: Props) => {
     return <Redirect to="/projects" />;
   }
 
-  const components = [<CardTitle />, <ControlPanel />, <DeletePackage />, <ReleaseTable />];
+  const components = [
+    { Component: CardTitle, type: "public" },
+    { Component: ControlPanel, type: "public" },
+    { Component: Locks, type: "private" },
+    { Component: DeletePackage, type: "public" },
+    { Component: ReleaseTable, type: "public" }
+  ]
+    .filter(({ type }) => project.private || type === "public")
+    .map(e => e.Component);
+
   return (
     <RouteContext.Provider value={project}>
       <div className={styles.container}>
-        {components.map((comp, i) => (
+        {components.map((Component, i) => (
           <div key={i}>
-            {comp}
-            {components.length - 1 === i && <Divider />}
+            <Component />
+            {components.length - 1 !== i && <Divider />}
           </div>
         ))}
       </div>

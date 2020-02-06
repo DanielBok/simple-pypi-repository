@@ -2,6 +2,7 @@ export type Store = {
   packages: PackageInfo[];
   packageInfo: PackageInfo;
   loading: {
+    lock: LoadingState;
     packages: LoadingState;
   };
 };
@@ -17,7 +18,7 @@ export type PackageInfo = {
 };
 
 export type PackageLock = {
-  id: string;
+  id: number;
   description: string;
   token: string;
 };

@@ -41,14 +41,14 @@ export const updatePackageMeta = (
     "/package",
     { ...payload, package: payload.name },
     {
-      beforeRequest: () => dispatch(PackageAction.updatePackageDetail.request()),
+      beforeRequest: () => dispatch(PackageAction.updatePackageDetailAsync.request()),
       onSuccess: data => {
         notification.success({ message: "Package details updated successfully" });
-        dispatch(PackageAction.updatePackageDetail.success(data));
+        dispatch(PackageAction.updatePackageDetailAsync.success(data));
       },
       onError: () => {
         notification.error({ message: "Package details update failed" });
-        dispatch(PackageAction.updatePackageDetail.failure());
+        dispatch(PackageAction.updatePackageDetailAsync.failure());
       },
       auth
     }
@@ -103,4 +103,41 @@ export const removePackage = (packageName: string): ThunkFunctionAsync => async 
     },
     auth
   });
+};
+
+/**
+ * Adds a lock to the package specified
+ */
+export const addPackageLock = (
+  packageName: string,
+  payload: Omit<PackageType.PackageLock, "id">
+): ThunkFunctionAsync => async (dispatch, getState) => {
+  const { auth } = AccountStorage;
+  if (getState().package.loading.lock === "REQUEST" || auth === null) return;
+
+  await api.Post<PackageType.PackageLock>(`package/${packageName}/lock`, payload, {
+    beforeRequest: () => dispatch(PackageAction.addPackageLockAsync.request()),
+    onSuccess: lock => dispatch(PackageAction.addPackageLockAsync.success({ name: packageName, lock })),
+    onError: () => dispatch(PackageAction.addPackageLockAsync.failure()),
+    auth
+  });
+};
+
+/**
+ * Removes the package lock from the package specified
+ */
+export const removePackageLock = (packageName: string, id: number): ThunkFunctionAsync => async (
+  dispatch,
+  getState
+) => {
+  const { auth } = AccountStorage;
+  if (getState().package.loading.lock === "REQUEST" || auth === null) return;
+
+  const { status } = await api.Delete(`package/${packageName}/lock/${id}`, undefined, {
+    beforeRequest: () => dispatch(PackageAction.removePackageLockAsync.request()),
+    onError: () => dispatch(PackageAction.removePackageLockAsync.failure()),
+    auth
+  });
+
+  if (status === 200) dispatch(PackageAction.removePackageLockAsync.success({ name: packageName, id }));
 };
