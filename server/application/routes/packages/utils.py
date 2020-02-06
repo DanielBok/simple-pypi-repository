@@ -18,7 +18,12 @@ def _package_details(p: Package):
     folder = PackageFolder(p.name)
     return {
         **p.to_dict(True),
-        "version_details": folder.version_info_list,
+        "version_details": [{
+            "version": v["version"],
+            "release_date": v["release_date"],
+            "files": v["files"],
+            "count": v["count"],
+        } for v in folder.version_info_list],
         "summary": folder.package_summary,
         "release_date": folder.last_upload_date,
     }

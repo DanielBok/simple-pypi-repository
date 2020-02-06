@@ -32,7 +32,7 @@ class PackageFolder:
                 if (match := wheel_regex.fullmatch(p.name)) is not None:
                     pv = match.group(1)
 
-            info = Wheel(p.as_posix()) if is_wheel else SDist(p.as_posix())
+            info = self._get_package_info(p.as_posix())
             packages[info.version].append({
                 "filename": p.name,
                 "size": os.path.getsize(p.as_posix()),
@@ -43,10 +43,15 @@ class PackageFolder:
 
         output = []
         for version, files in packages.items():
-            max_date = max(files, key=lambda x: datetime.strptime(x['upload_date'], "%b %d, %Y"))
+            info = self._get_package_info(files[0]['filename'])
+
+            max_date = max(files, key=lambda x: datetime.strptime(x['upload_date'], "%b %d, %Y"))['upload_date']
             output.append({
                 "version": version,
+                "summary": info.summary,
                 "release_date": max_date,
+                "description": info.description,
+                "content_type": info.description_content_type,
                 "files": files,
                 "count": {
                     "wheel": sum(1 if x['filename'].endswith('.whl') else 0 for x in files),
@@ -62,12 +67,7 @@ class PackageFolder:
         return num_files
 
     def remove_version(self, version: str):
-        packages = []
-        for p in self.path.iterdir():
-            info = Wheel(p.as_posix()) if p.name.endswith('.whl') else SDist(p.as_posix())
-            if info.version == version:
-                packages.append(p)
-
+        packages = [p for p in self.path.iterdir() if self._get_package_info(p.as_posix()).version == version]
         for p in packages:
             os.remove(p.as_posix())
 
@@ -75,17 +75,21 @@ class PackageFolder:
 
     @property
     def package_summary(self):
-        if (path := self._last_uploaded_file_path) is None:
-            return ""
-        else:
-            return Wheel(path) if path.endswith('.whl') else SDist(path).summary
+        return p.summary if (p := self.latest_package) is not None else ""
 
     @property
     def last_upload_date(self):
-        if (path := self._last_uploaded_file_path) is None:
-            return None
-        else:
-            return datetime.fromtimestamp(os.path.getmtime(path)).strftime("%d %b %Y")
+        return datetime.fromtimestamp(os.path.getmtime(path)).strftime("%d %b %Y") if \
+            (path := self._last_uploaded_file_path) is not None \
+            else ""
+
+    @property
+    def latest_version(self):
+        return p.version if (p := self.latest_package) is not None else ""
+
+    @property
+    def latest_package(self):
+        return self._get_package_info(path) if (path := self._last_uploaded_file_path) is not None else None
 
     @property
     def _last_uploaded_file_path(self):
@@ -93,3 +97,7 @@ class PackageFolder:
             return None
 
         return max(self.path.iterdir(), key=lambda x: os.path.getmtime(x.as_posix())).as_posix()
+
+    def _get_package_info(self, filename: str):
+        fp = self.path.joinpath(filename).as_posix()
+        return Wheel(fp) if fp.endswith('.whl') else SDist(fp)
