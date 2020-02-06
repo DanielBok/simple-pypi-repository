@@ -1,9 +1,14 @@
 import { ProjectApi, ProjectSelector } from "@/features/project";
+import { Tabs } from "antd";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps, withRouter } from "react-router-dom";
+import Description from "./Description";
 import styles from "./styles.less";
+import TabTitle from "./TabTitle";
 import TopBar from "./TopBar";
+
+const { TabPane } = Tabs;
 
 type Props = RouteComponentProps<{ project: string; version?: string }>;
 
@@ -16,7 +21,6 @@ const ProjectView = ({
   const hasVersion = useSelector(ProjectSelector.hasProjectVersion(version));
 
   useEffect(() => {
-    console.log(project, version);
     dispatch(ProjectApi.fetchProjectDetail(project, version));
     // eslint-disable-next-line
   }, [project, version]);
@@ -28,6 +32,17 @@ const ProjectView = ({
   return (
     <div className={styles.container}>
       <TopBar />
+      <Tabs defaultActiveKey="1">
+        <TabPane tab={<TabTitle type="align-left" title="Project description" />} key="1">
+          <Description />
+        </TabPane>
+        <TabPane tab={<TabTitle type="profile" title="Release history" />} key="2">
+          Content of Tab Pane 2
+        </TabPane>
+        <TabPane tab={<TabTitle type="download" title="Download files" />} key="3">
+          Content of Tab Pane 3
+        </TabPane>
+      </Tabs>
     </div>
   );
 };
