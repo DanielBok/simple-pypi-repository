@@ -1,11 +1,16 @@
 from flask import Blueprint, abort, jsonify, request
 
-from application.models import Package, PackageLock
-from application.routes.projects.package_info import version_details
-from application.utils import get_account
-from .filesys import PackageFolder
+from application.libs import PackageFolder, get_account
+from application.models import PackageLock
+from .utils import _fetch_validated_package, _package_details
 
 bp = Blueprint("package_api", __name__)
+
+
+@bp.route("/")
+def get_all_user_packages():
+    account = get_account()
+    return jsonify([_package_details(p) for p in account.packages])
 
 
 @bp.route('/', methods=['PUT'])
@@ -20,7 +25,7 @@ def update_package_settings():
 @bp.route('/<package_name>', methods=['GET'])
 def get_package_details(package_name: str):
     package = _fetch_validated_package(package_name)
-    return package.to_dict(True)
+    return _package_details(package)
 
 
 @bp.route('/<package_name>/lock', methods=['POST'])
@@ -60,14 +65,4 @@ def remove_package_version(package_name, version):
     folder = PackageFolder(package.name)
 
     folder.remove_version(version)
-    return jsonify(version_details(folder.path))
-
-
-def _fetch_validated_package(package_name: str) -> Package:
-    account = get_account()
-    package = account.find_package(package_name)  # checks if package exists within the account's package list
-    if package is None:
-        abort(400, "Account does not own package. Please ensure that you have uploaded the package or that the "
-                   "account you are using is the owner of the package")
-
-    return package
+    return jsonify(folder.version_info_list)

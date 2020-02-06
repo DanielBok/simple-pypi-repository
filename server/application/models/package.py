@@ -83,5 +83,4 @@ class PackageLock(ResourceMixin, db.Model):
             "id": self.id,
             "token": self.token,
             "description": self.description,
-            "package_id": self.package_id
         }
