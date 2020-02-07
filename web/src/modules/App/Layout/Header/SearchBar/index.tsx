@@ -29,5 +29,6 @@ const useProjectLoadEffect = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(MetaApi.fetchProjectNamesList());
-  });
+    // eslint-disable-next-line
+  }, []);
 };

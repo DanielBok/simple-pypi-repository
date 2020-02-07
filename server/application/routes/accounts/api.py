@@ -3,6 +3,7 @@ from shutil import rmtree
 
 from flask import Blueprint, abort, current_app, request
 
+from application.libs import get_account
 from application.models import Account
 
 bp = Blueprint("accounts", __name__, template_folder="templates")
@@ -26,14 +27,14 @@ def create_account():
 
 @bp.route("/", methods=["PUT"])
 def update_account():
+    account = get_account()
     data = request.get_json()
 
-    account = Account.find_account(data['username'], data['password'])
-    if account is None:
-        abort(401, "invalid account credentials")
-
-    new_details = data['new_details']
-    return account.update(**new_details).to_dict()
+    try:
+        return account.update(data.get('password', None), data.get('email', None)).to_dict()
+    except Exception as e:
+        current_app.logger.error(e)
+        abort(400, "could not update account")
 
 
 @bp.route("/", methods=["DELETE"])
@@ -64,7 +65,7 @@ def validate_account():
     if account is None:
         abort(404, error_message)
 
-    return "", 200
+    return account.to_dict()
 
 
 @bp.route("/check-exists/<user_or_email>")

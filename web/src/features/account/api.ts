@@ -29,7 +29,7 @@ export const createAccount = (payload: AccountType.AccountInfo): ThunkFunctionAs
 /**
  * Updates the account details
  */
-export const updateAccount = (newDetails: AccountType.AccountInfo): ThunkFunctionAsync => async (
+export const updateAccount = (newDetails: Partial<AccountType.AccountInfo>): ThunkFunctionAsync => async (
   dispatch,
   getState
 ) => {
@@ -37,31 +37,25 @@ export const updateAccount = (newDetails: AccountType.AccountInfo): ThunkFunctio
   if (loading === "REQUEST" || !validated) return;
 
   const account = AccountStorage.load();
-  if (account === null) {
+  const auth = AccountStorage.auth;
+  if (account === null || auth === null) {
     notification.error({ message: "Could not fetch user credentials. Please enable local storage for your browser" });
     return;
   }
-  const { username, password } = account;
-  const { data, status } = await api.Put<AccountType.AccountInfo>(
-    "/account",
-    {
-      username,
-      password,
-      newDetails
-    },
-    {
-      beforeRequest: () => dispatch(AccountAction.createUpdateAccountAsync.request())
-    }
-  );
 
-  if (status === 200) {
-    AccountStorage.save(newDetails);
-    dispatch(AccountAction.createUpdateAccountAsync.success(data));
-    notification.success({ message: `Account updated successfully` });
-  } else {
-    dispatch(AccountAction.createUpdateAccountAsync.failure());
-    notification.error({ message: `Failed to update account` });
-  }
+  await api.Put<AccountType.AccountInfo>("/account", newDetails, {
+    beforeRequest: () => dispatch(AccountAction.createUpdateAccountAsync.request()),
+    onSuccess: data => {
+      AccountStorage.save({ ...account, ...newDetails });
+      dispatch(AccountAction.createUpdateAccountAsync.success(data));
+      notification.success({ message: `Account updated successfully` });
+    },
+    onError: () => {
+      dispatch(AccountAction.createUpdateAccountAsync.failure());
+      notification.error({ message: `Failed to update account` });
+    },
+    auth
+  });
 };
 
 /**

@@ -22,7 +22,7 @@ class Account(ResourceMixin, db.Model):
 
     def __init__(self, username: str, password: str, email: str):
         self.username = username
-        self.password = password
+        self.password = self.encrypt(password)
         self.email = email
 
         self.validate()
@@ -62,25 +62,27 @@ class Account(ResourceMixin, db.Model):
         if self.username == "":
             raise ValueError("username cannot be empty")
 
-        if self.password == "":
-            raise ValueError("password cannot be empty")
-        else:
-            self.password = self.encrypt(self.password)
-
         if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", self.email) is None:
             raise ValueError(f"email address '{self.email}' is not valid")
+
+        if self.password == "":
+            raise ValueError("password cannot be empty")
 
     def is_valid_password(self, password: str):
         return self.password == self.encrypt(password)
 
-    def update(self, username: str, password: str, email: str):
-        self.username = username
-        self.password = password
-        self.email = email
+    def update(self, password: str, email: str):
+        if password is None and email is None:
+            return self
+
+        if password is not None:
+            self.password = self.encrypt(password)
+
+        if email is not None:
+            self.email = email
 
         self.validate()
-        self.save()
-        return self
+        return self.save()
 
     def to_dict(self, list_packages=False):
         out = {

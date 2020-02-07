@@ -1,5 +1,6 @@
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Setting from "./pages/Setting";
 
 export default [
   {
@@ -11,5 +12,10 @@ export default [
     component: Register,
     path: "/register",
     title: "Create an account"
+  },
+  {
+    component: Setting,
+    path: "/setting",
+    title: "Edit account settings"
   }
 ] as ModuleRoute[];
