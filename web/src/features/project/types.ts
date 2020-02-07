@@ -4,7 +4,7 @@ export type Store = {
   };
   name: string;
   latestVersion: string;
-  isPrivate: boolean
+  isPrivate: boolean;
   project: ProjectInfo;
   loading: {
     project: LoadingState;
@@ -35,6 +35,6 @@ export type FileDetail = {
 export type FetchProjectResponse = {
   name: string;
   latestVersion: string;
-  private: boolean
+  private: boolean;
   projects: ProjectInfo[];
 };

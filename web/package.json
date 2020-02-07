@@ -11,7 +11,6 @@
     "camelcase-keys": "^6.1.2",
     "classnames": "^2.2.6",
     "connected-react-router": "^6.6.1",
-    "fuse.js": "^3.4.6",
     "history": "^4.10.1",
     "immer": "^5.3.2",
     "lodash": "^4.17.15",

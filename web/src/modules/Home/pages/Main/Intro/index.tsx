@@ -14,7 +14,12 @@ export default () => (
       <p>
         SPI is a customized internal Python repository which enables you to store and share your own private packages.
         It enables both public and private download.
-        <a href="https://packaging.python.org/installing/" title="External link" target="_blank" rel="noopener">
+        <a
+          href="https://packaging.python.org/installing/"
+          title="External link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Learn about installing packages
         </a>
       </p>
@@ -25,7 +30,7 @@ export default () => (
           href="https://packaging.python.org/tutorials/packaging-projects/"
           title="External link"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
         >
           Learn how to package your Python code for PyPI
         </a>
