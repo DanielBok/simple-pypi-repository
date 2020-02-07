@@ -1,9 +1,14 @@
-from flask import Blueprint, abort
+from flask import Blueprint, abort, jsonify
 
 from application.libs import PackageFolder
 from application.models import Package
 
 bp = Blueprint("project_api", __name__)
+
+
+@bp.route("/")
+def get_project_list():
+    return jsonify([p.name for p in Package.list()])
 
 
 @bp.route("/<project>")

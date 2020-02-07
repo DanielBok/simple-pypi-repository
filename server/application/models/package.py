@@ -1,7 +1,7 @@
 from hashlib import sha256
 from os import getenv
 from random import random
-from typing import Optional
+from typing import List, Optional
 
 from application.extensions import db
 from ._mixins import ResourceMixin
@@ -26,6 +26,10 @@ class Package(ResourceMixin, db.Model):
     @classmethod
     def find_by_name(cls, name: str) -> "Package":
         return cls.query.filter_by(name=name.lower()).one_or_none()
+
+    @classmethod
+    def list(cls) -> List["Package"]:
+        return cls.query.all()
 
     def is_valid_token(self, token: str):
         for lock in self.locks:  # type: PackageLock
