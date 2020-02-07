@@ -22,6 +22,10 @@ class Account(ResourceMixin, db.Model):
 
     def __init__(self, username: str, password: str, email: str):
         self.username = username
+        password = password.strip()
+        if password == "":
+            raise ValueError("password cannot be empty")
+
         self.password = self.encrypt(password)
         self.email = email
 
@@ -57,16 +61,12 @@ class Account(ResourceMixin, db.Model):
 
     def validate(self):
         self.username = self.username.strip()
-        self.password = self.password.strip()
         self.email = self.email.strip()
         if self.username == "":
             raise ValueError("username cannot be empty")
 
         if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", self.email) is None:
             raise ValueError(f"email address '{self.email}' is not valid")
-
-        if self.password == "":
-            raise ValueError("password cannot be empty")
 
     def is_valid_password(self, password: str):
         return self.password == self.encrypt(password)
@@ -76,6 +76,9 @@ class Account(ResourceMixin, db.Model):
             return self
 
         if password is not None:
+            password = password.strip()
+            if password == "":
+                raise ValueError("password cannot be an empty string")
             self.password = self.encrypt(password)
 
         if email is not None:

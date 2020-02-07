@@ -48,8 +48,8 @@ def test_update_account(db_session):
     account = Account.find_account(user2.email, "password")
     assert account is not None
 
-    account.update("user3", "password", "user3@gmail.com")
-    assert Account.find_account("user3", "password") is not None
+    account.update("password", "user3@gmail.com")
+    assert Account.find_account("user3@gmail.com", "password") is not None
 
 
 def test_create_package(db_session):
