@@ -1,4 +1,5 @@
 DB_NAME := "ppdb"
+TAG := $(shell git describe --abbrev=0)
 
 db:
 	echo "Starting development database server"
@@ -11,3 +12,12 @@ db:
 
 rm-db:
 	docker container rm -f $(DB_NAME)
+
+image:
+	docker image build -t danielbok/spr-server:$(TAG) .
+	docker image prune -f
+
+certs:
+	rm -rf certs
+	mkdir certs
+	openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 3650 -nodes
