@@ -1,0 +1,44 @@
+version: "3.7"
+
+services:
+  db:
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: db
+    volumes:
+      - type: volume
+        source: app_data
+        target: /var/lib/postgresql/data
+  
+  server:
+    image: danielbok/spr-server:0.1
+    restart: always
+    environment: 
+      CERTFILE: /var/certs/server.crt
+      KEYFILE: /var/certs/server.key
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: db
+      POSTGRES_DB: db
+    volumes: 
+      - type: bind
+        source: .
+        target: /var/certs
+    ports:
+      - "9090:443"
+  web:
+    image: danielbok/spr-web:0.1
+    restart: always
+    volumes: 
+      - type: bind
+        source: .
+        target: /etc/nginx/certs/
+    ports: 
+      - "9080:80"
+      - "9443:443"
+
+volumes: 
+  app_data:
