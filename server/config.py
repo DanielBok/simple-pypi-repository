@@ -13,7 +13,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
         user=os.getenv("POSTGRES_USER", 'user'),
         pw=os.getenv("POSTGRES_PASSWORD", 'password'),
-        url=os.getenv("POSTGRES_PASSWORD", 'localhost:5432'),
+        url=os.getenv("POSTGRES_HOST", 'localhost:5432'),
         db=os.getenv("POSTGRES_DB", 'db'),
     )
 
