@@ -46,7 +46,7 @@ services:
       - server
   
   migration:
-    image: danielbok/lilac-api:${LILAC_API_VERSION}
+    image: danielbok/spr-server:0.1
     entrypoint:
       - flask
       - db
@@ -56,6 +56,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_HOST: db
       POSTGRES_DB: db
+      PYTHONPATH: .
     depends_on:
       - db
 
